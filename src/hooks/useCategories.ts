@@ -899,7 +899,8 @@ export const useCategories = () => {
     getCategorizedSidebarItems,
     getFeaturedCategories,
     getCategoriesByUsage,
-    getCategoriesByProductType: getCategoriesByProductTypeSync,
+    // getCategoriesByProductType: getCategoriesByProductTypeSync,
+    
     getProductCategories,
     getCategoryOptions, // This is now fixed
     getCategoriesForProductForm,
