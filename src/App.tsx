@@ -896,8 +896,6 @@ const NewAdminDashboardWrapper = () => {
     if (path === '/admin/analytics') return 'analytics';
     if (path === '/admin/settings') return 'settings';
     if (path === '/admin/categories') return 'categories';
-    // if (path === '/admin/buyers') return 'buyers';
-
     return 'dashboard';
   };
 
@@ -1205,7 +1203,7 @@ function AppContent() {
       />
     );
   };
-  
+  console.log("carttttttttttttttttttttttttttt",cartItems);
 
   const EditProductWrapper = () => {
     const { productId } = useParams();
@@ -1402,7 +1400,7 @@ function AppContent() {
         <Route path="/admin/activity" element={<NewAdminDashboardWrapper />} />
         <Route path="/admin/analytics" element={<NewAdminDashboardWrapper />} />
         <Route path="/admin/settings" element={<NewAdminDashboardWrapper />} />
-         <Route path="/admin/sellers" element={<SellersPage />} />
+         <Route path="/admin/sellersPage" element={<SellersPage />} />
           <Route path="/admin/buyers" element={<BuyersPage />} />
           <Route path="/admins" element={<AdminsPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

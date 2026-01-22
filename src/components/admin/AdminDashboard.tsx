@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import AdminsPage from "../../components/AdminPages/AdminsPage"
+import UserpageTabs from "../users/UserpageTabs";
 import {
   Home,
   Users,
@@ -98,6 +99,7 @@ import { toast } from "sonner";
 import ProtectedRoute from "../ProtectedRoute";
 import { render } from "react-dom";
 import BuyersPage from "../AdminPages/BuyersPage";
+import UsersPage from "../users/UserpageTabs";
 
 interface AdminDashboardProps {
   onNavigate?: (page: string) => void;
@@ -4201,6 +4203,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
         return renderDashboard();
     }
   };
+
   const [expandedDropdowns, setExpandedDropdowns] = useState<string[]>([]);
 
   // Add this function to handle dropdown toggles

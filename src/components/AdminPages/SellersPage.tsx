@@ -118,7 +118,8 @@ export default function SellersPage() {
   };
 
   return (
-    <div className="p-8">
+  <div className="p-4 sm:p-8 bg-gray-50 min-h-screen">
+
       <UserPageHeader
         title="Unified User Management Hub"
         description="Manage sellers, buyers, and administrative staff across the platform."
@@ -131,162 +132,182 @@ export default function SellersPage() {
       <UserTabs />
 
       {/* Pending Seller Approval */}
-      <section className="mb-8">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2">
-            <Clock className="h-5 w-5 text-primary" />
-            <h3 className="text-sm font-black uppercase tracking-widest">
-              Pending Seller Approval
-            </h3>
-            <span className="status-badge status-badge-error">
-              {pendingSellers.length} Awaiting
-            </span>
-          </div>
-        </div>
-        <div className="dashboard-box">
-          <table className="w-full text-left">
-            <thead className="bg-muted border-b border-border text-[11px] font-bold text-muted-foreground uppercase">
-              <tr>
-                <th className="px-6 py-3">Business Information</th>
-                <th className="px-6 py-3">Submission Date</th>
-                <th className="px-6 py-3">Documents</th>
-                <th className="px-6 py-3 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border">
-              {pendingSellers.map((seller) => (
-                <tr key={seller.id}>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <div
-                        className="w-10 h-10 rounded bg-cover bg-center flex-shrink-0"
-                        style={{ backgroundImage: `url(${seller.image})` }}
-                      />
-                      <div>
-                        <p className="text-sm font-bold">{seller.name}</p>
-                        <p className="text-[11px] text-muted-foreground">
-                          {seller.email} • ID: {seller.id}
-                        </p>
-                        <p className="text-[10px] text-info font-bold flex items-center gap-1">
-                          <MapPin className="h-3 w-3" />
-                          {seller.location}
-                        </p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 text-xs font-medium text-muted-foreground">
-                    {seller.submissionDate}
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex gap-2">
-                      {seller.documents.map((doc) => (
-                        <span key={doc} className="status-badge status-badge-info">
-                          {doc}
-                        </span>
-                      ))}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex justify-end gap-2">
-                      <button
-                        className="btn-primary !px-3 !py-1.5 !text-[11px]"
-                        onClick={() => handleApprove(seller.name, seller.id)}
-                      >
-                        Approve
-                      </button>
-                      <button
-                        className="btn-outline !px-3 !py-1.5 !text-[11px] hover:!text-destructive hover:!border-destructive"
-                        onClick={() => handleReject(seller.name, seller.id)}
-                      >
-                        Reject
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          <div className="px-6 py-3 bg-muted/50 border-t border-border">
-            <button className="text-[11px] font-bold text-muted-foreground hover:text-primary transition-colors uppercase tracking-widest">
-              View all pending applications
-            </button>
-          </div>
-        </div>
-      </section>
+     <section className="mb-10">
+  <div className="flex items-center gap-2 mb-4">
+    <Clock className="h-5 w-5 text-yellow-600" />
+    <h3 className="text-sm font-extrabold uppercase tracking-widest text-gray-900">
+      Pending Seller Approval
+    </h3>
+    <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-800">
+      {pendingSellers.length} Awaiting
+    </span>
+  </div>
+
+  <div className="bg-white border border-gray-200 rounded-lg overflow-x-auto shadow-sm">
+    <table className="min-w-[700px] w-full text-left">
+      <thead className="bg-gray-100 border-b border-gray-200">
+        <tr className="text-[11px] uppercase font-bold text-gray-600">
+          <th className="px-6 py-3">Business Info</th>
+          <th className="px-6 py-3">Submission Date</th>
+          <th className="px-6 py-3">Documents</th>
+          <th className="px-6 py-3 text-right">Actions</th>
+        </tr>
+      </thead>
+
+      <tbody className="divide-y divide-gray-200">
+        {pendingSellers.map((seller) => (
+          <tr key={seller.id} className="hover:bg-gray-50">
+            {/* Business Info */}
+            <td className="px-6 py-4">
+              <div className="flex items-center gap-3">
+                <img
+                  src={seller.image}
+                  alt={seller.name}
+                  className="w-10 h-10 rounded object-cover"
+                />
+                <div>
+                  <p className="text-sm font-semibold text-gray-900">
+                    {seller.name}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    {seller.email} • {seller.id}
+                  </p>
+                  <p className="flex items-center gap-1 text-xs text-blue-600 font-medium mt-1">
+                    <MapPin className="h-3 w-3" /> {seller.location}
+                  </p>
+                </div>
+              </div>
+            </td>
+
+            {/* Date */}
+            <td className="px-6 py-4 text-xs text-gray-500">
+              {seller.submissionDate}
+            </td>
+
+            {/* Documents */}
+            <td className="px-6 py-4">
+              <div className="flex flex-wrap gap-2">
+                {seller.documents.map((doc) => (
+                  <span
+                    key={doc}
+                    className="text-xs font-semibold px-2 py-0.5 rounded-full bg-blue-100 text-blue-700"
+                  >
+                    {doc}
+                  </span>
+                ))}
+              </div>
+            </td>
+
+            {/* Actions */}
+            <td className="px-6 py-4">
+              <div className="flex justify-end gap-2">
+                <button
+                  className="bg-yellow-400 hover:bg-yellow-500 text-black text-xs px-3 py-1.5 rounded font-semibold"
+                  onClick={() => handleApprove(seller.name, seller.id)}
+                >
+                  Approve
+                </button>
+                <button
+                  className="border border-gray-300 text-gray-700 text-xs px-3 py-1.5 rounded hover:border-red-500 hover:text-red-500"
+                  onClick={() => handleReject(seller.name, seller.id)}
+                >
+                  Reject
+                </button>
+              </div>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+
+    <div className="px-6 py-3 bg-gray-50 border-t border-gray-200">
+      <button className="text-xs font-semibold uppercase tracking-widest text-gray-500 hover:text-blue-600">
+        View all pending applications
+      </button>
+    </div>
+  </div>
+</section>
 
       {/* Approved Sellers */}
-      <section>
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2">
-            <Verified className="h-5 w-5 text-success" />
-            <h3 className="text-sm font-black uppercase tracking-widest">
-              Approved Sellers
-            </h3>
-          </div>
-        </div>
-        <div className="dashboard-box">
-          <table className="w-full text-left">
-            <thead className="bg-muted border-b border-border text-[11px] font-bold text-muted-foreground uppercase">
-              <tr>
-                <th className="px-6 py-3">Business &amp; Founder</th>
-                <th className="px-6 py-3">Total Sales</th>
-                <th className="px-6 py-3">Products</th>
-                <th className="px-6 py-3">Status</th>
-                <th className="px-6 py-3 text-right">Profile</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border">
-              {approvedSellers.map((seller) => (
-                <tr key={seller.id}>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <div
-                        className="w-10 h-10 rounded bg-cover bg-center flex-shrink-0"
-                        style={{ backgroundImage: `url(${seller.image})` }}
-                      />
-                      <div>
-                        <p className="text-sm font-bold">{seller.name}</p>
-                        <p className="text-[11px] text-muted-foreground">
-                          Founder: {seller.founder}
-                        </p>
-                        <p className="text-[10px] text-info font-bold flex items-center gap-1">
-                          <MapPin className="h-3 w-3" />
-                          {seller.location}
-                        </p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 font-mono text-sm font-bold">
-                    {seller.totalSales}
-                  </td>
-                  <td className="px-6 py-4 text-xs font-medium">
-                    {seller.activeProducts} Active
-                  </td>
-                  <td className="px-6 py-4">
-                    <span
-                      className={`status-badge ${
-                        seller.rating >= 4.5
-                          ? "status-badge-success"
-                          : "status-badge-warning"
-                      }`}
-                    >
-                      {seller.rating >= 4.5 ? "Active" : "On Probation"}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <button
-                      className="btn-primary !px-3 !py-1.5 !text-[11px]"
-                      onClick={() => handleViewProfile(seller)}
-                    >
-                      View Profile
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </section>
+     <section>
+  <div className="flex items-center gap-2 mb-4">
+    <Verified className="h-5 w-5 text-green-600" />
+    <h3 className="text-sm font-extrabold uppercase tracking-widest text-gray-900">
+      Approved Sellers
+    </h3>
+  </div>
+
+  <div className="bg-white border border-gray-200 rounded-lg overflow-x-auto shadow-sm">
+    <table className="min-w-[700px] w-full text-left">
+      <thead className="bg-gray-100 border-b border-gray-200">
+        <tr className="text-[11px] uppercase font-bold text-gray-600">
+          <th className="px-6 py-3">Business & Founder</th>
+          <th className="px-6 py-3">Total Sales</th>
+          <th className="px-6 py-3">Products</th>
+          <th className="px-6 py-3">Status</th>
+          <th className="px-6 py-3 text-right">Profile</th>
+        </tr>
+      </thead>
+
+      <tbody className="divide-y divide-gray-200">
+        {approvedSellers.map((seller) => (
+          <tr key={seller.id} className="hover:bg-gray-50">
+            <td className="px-6 py-4">
+              <div className="flex items-center gap-3">
+                <img
+                  src={seller.image}
+                  alt={seller.name}
+                  className="w-10 h-10 rounded object-cover"
+                />
+                <div>
+                  <p className="text-sm font-semibold text-gray-900">
+                    {seller.name}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    Founder: {seller.founder}
+                  </p>
+                  <p className="flex items-center gap-1 text-xs text-blue-600 font-medium mt-1">
+                    <MapPin className="h-3 w-3" /> {seller.location}
+                  </p>
+                </div>
+              </div>
+            </td>
+
+            <td className="px-6 py-4 text-sm font-mono font-semibold text-gray-900">
+              {seller.totalSales}
+            </td>
+
+            <td className="px-6 py-4 text-xs font-medium text-gray-700">
+              {seller.activeProducts} Active
+            </td>
+
+            <td className="px-6 py-4">
+              <span
+                className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
+                  seller.rating >= 4.5
+                    ? "bg-green-100 text-green-800"
+                    : "bg-yellow-100 text-yellow-800"
+                }`}
+              >
+                {seller.rating >= 4.5 ? "Active" : "On Probation"}
+              </span>
+            </td>
+
+            <td className="px-6 py-4 text-right">
+              <button
+                className="border border-blue-500 text-blue-600 hover:bg-blue-50 text-xs px-3 py-1.5 rounded font-semibold"
+                onClick={() => handleViewProfile(seller)}
+              >
+                View Profile
+              </button>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</section>
+
 
       <FilterDialog
         open={filterOpen}
