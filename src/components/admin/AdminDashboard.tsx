@@ -1,42 +1,103 @@
-// src/components/admin/AdminDashboard.tsx - COMPLETELY REWRITTEN WITH ALL FIXES
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import AdminsPage from "../../components/AdminPages/AdminsPage"
 import {
-  Home, Users, Package, ShoppingBag, DollarSign, Shield,
-  Bell, Settings, LogOut, Search, Download,
-  AlertCircle, RefreshCw, TrendingUp, BarChart,
-  Receipt, Megaphone, Activity, Star,
-  ChevronRight, CheckCircle, CreditCard, Wallet,
-  FolderTree, FileCheck, ShoppingCart, Menu, X,
-  UserCheck, UserX, Eye, Calendar, FileText,
-  Building, Phone, MapPin, Banknote, BadgeCheck,
-  ArrowUp, ArrowDown, MoreVertical, ExternalLink,
-  Filter, Mail, Clock, AlertTriangle, Info,
-  Database, Loader2, Edit, Trash2, EyeOff,
-  TrendingDown, Award, Truck, Box, Tag,
-  Layers, Hash, Archive, Send, VolumeX,
-  Ban, Flag, ShieldAlert, Grid, List, Columns,
-  Upload, Plus, Image as ImageIcon, TrendingUp as TrendingUpIcon,
-  Save
-} from 'lucide-react';
+  Home,
+  Users,
+  Package,
+  ShoppingBag,
+  DollarSign,
+  Shield,
+  Bell,
+  Settings,
+  LogOut,
+  Search,
+  Download,
+  AlertCircle,
+  RefreshCw,
+  TrendingUp,
+  BarChart,
+  Receipt,
+  Megaphone,
+  Activity,
+  Star,
+  ChevronRight,
+  CheckCircle,
+  CreditCard,
+  Wallet,
+  FolderTree,
+  FileCheck,
+  ShoppingCart,
+  Menu,
+  X,
+  UserCheck,
+  UserX,
+  Eye,
+  Calendar,
+  FileText,
+  Building,
+  Phone,
+  MapPin,
+  Banknote,
+  BadgeCheck,
+  ArrowUp,
+  ArrowDown,
+  MoreVertical,
+  ExternalLink,
+  Filter,
+  Mail,
+  Clock,
+  AlertTriangle,
+  Info,
+  Database,
+  Loader2,
+  Edit,
+  Trash2,
+  EyeOff,
+  TrendingDown,
+  Award,
+  Truck,
+  Box,
+  Tag,
+  Layers,
+  Hash,
+  Archive,
+  Send,
+  VolumeX,
+  Ban,
+  Flag,
+  ShieldAlert,
+  Grid,
+  List,
+  Columns,
+  Upload,
+  Plus,
+  Image as ImageIcon,
+  TrendingUp as TrendingUpIcon,
+  Save,
+  User,
+  ChevronDown,
+} from "lucide-react";
 
 // Import Hooks
-import { useDashboardData } from '@/hooks/useDashboardData';
-import { useSellers } from '@/hooks/useSellers';
-import { useProducts } from '@/hooks/useProducts';
-import { useOrders } from '@/hooks/useOrders';
-import { useActivityLogs } from '@/hooks/useActivityLogs';
-import { useNotifications } from '@/hooks/useNotifications';
-import { useAdminReports } from '@/hooks/useAdminReports';
-import { useReviews } from '@/hooks/useReviews';
-import { useFinance } from '@/hooks/useFinance';
-import { useWallet } from '@/hooks/useWallet';
-import { useCategories } from '@/hooks/useCategories';
-import { useContracts } from '@/hooks/useContracts';
-import { useAdvertising } from '@/hooks/useAdvertising';
+import { useDashboardData } from "../../hooks/useDashboardData";
+import { useSellers } from "../../hooks/useSellers";
+import { useProducts } from "../../hooks/useProducts";
+import { useOrders } from "../../hooks/useOrders";
+import { useActivityLogs } from "../../hooks/useActivityLogs";
+import { useNotifications } from "../../hooks/useNotifications";
+import { useAdminReports } from "../../hooks/useAdminReports";
+import { useReviews } from "../../hooks/useReviews";
+import { useFinance } from "../../hooks/useFinance";
+import { useWallet } from "../../hooks/useWallet";
+import { useCategories } from "../../hooks/useCategories";
+import { useContracts } from "../../hooks/useContracts";
+import { useAdvertising } from "../../hooks/useAdvertising";
 
-import { toast } from 'sonner';
-import ProtectedRoute from '../ProtectedRoute';
+import { toast } from "sonner";
+import ProtectedRoute from "../ProtectedRoute";
+import { render } from "react-dom";
+import BuyersPage from "../AdminPages/BuyersPage";
 
 interface AdminDashboardProps {
   onNavigate?: (page: string) => void;
@@ -54,15 +115,23 @@ interface Product {
   cost_price?: number;
   stock_quantity: number;
   min_stock_level?: number;
-  status: 'active' | 'inactive' | 'draft' | 'pending' | 'archived' | 'suspended' | 'under_review' | 'rejected';
+  status:
+    | "active"
+    | "inactive"
+    | "draft"
+    | "pending"
+    | "archived"
+    | "suspended"
+    | "under_review"
+    | "rejected";
   is_featured: boolean;
   is_best_seller?: boolean;
   is_advertised?: boolean;
   images: string[];
   main_image?: string;
   category_id?: string;
-  category_type: 'ready_made' | 'customized';
-  usage_type: 'indoor' | 'outdoor' | 'both';
+  category_type: "ready_made" | "customized";
+  usage_type: "indoor" | "outdoor" | "both";
   product_type?: string;
   product_categories?: string[];
   seller_id: string;
@@ -115,7 +184,7 @@ interface SellerApplication {
   bank_name: string;
   account_number: string;
   iban: string;
-  status: 'pending' | 'approved' | 'rejected';
+  status: "pending" | "approved" | "rejected";
   admin_notes?: string;
   rejection_reason?: string;
   reviewed_by?: string;
@@ -126,57 +195,64 @@ interface SellerApplication {
 
 interface WarningFormData {
   productId: string;
-  reason: 'fake_product' | 'misleading_info' | 'poor_quality' | 'copyright_issue' | 'policy_violation' | 'customer_complaints' | 'other';
-  severity: 'low' | 'medium' | 'high' | 'critical';
+  reason:
+    | "fake_product"
+    | "misleading_info"
+    | "poor_quality"
+    | "copyright_issue"
+    | "policy_violation"
+    | "customer_complaints"
+    | "other";
+  severity: "low" | "medium" | "high" | "critical";
   message: string;
   notifySeller: boolean;
   suspendProduct: boolean;
   suspensionDuration?: number;
-  suspensionUnit?: 'hours' | 'days' | 'weeks';
+  suspensionUnit?: "hours" | "days" | "weeks";
   adminNote: string;
 }
 
 // Metric Card Component
-const MetricCard: React.FC<{ 
-  title: string; 
-  value: string | number; 
-  icon: any; 
-  color?: 'primary' | 'success' | 'warning' | 'danger' | 'accent' | 'info';
+const MetricCard: React.FC<{
+  title: string;
+  value: string | number;
+  icon: any;
+  color?: "primary" | "success" | "warning" | "danger" | "accent" | "info";
   trend?: { value: number; isPositive: boolean };
   loading?: boolean;
   onClick?: () => void;
-}> = ({ 
-  title, 
-  value, 
-  icon: Icon, 
-  color = 'primary',
+}> = ({
+  title,
+  value,
+  icon: Icon,
+  color = "primary",
   trend,
   loading = false,
-  onClick 
+  onClick,
 }) => {
   const colorClasses = {
-    primary: 'border-blue-200 bg-blue-50',
-    success: 'border-green-200 bg-green-50',
-    warning: 'border-yellow-200 bg-yellow-50',
-    danger: 'border-red-200 bg-red-50',
-    accent: 'border-purple-200 bg-purple-50',
-    info: 'border-cyan-200 bg-cyan-50'
+    primary: "border-blue-200 bg-blue-50",
+    success: "border-green-200 bg-green-50",
+    warning: "border-yellow-200 bg-yellow-50",
+    danger: "border-red-200 bg-red-50",
+    accent: "border-purple-200 bg-purple-50",
+    info: "border-cyan-200 bg-cyan-50",
   };
 
   const iconColorClasses = {
-    primary: 'bg-blue-100 text-blue-600',
-    success: 'bg-green-100 text-green-600',
-    warning: 'bg-yellow-100 text-yellow-600',
-    danger: 'bg-red-100 text-red-600',
-    accent: 'bg-purple-100 text-purple-600',
-    info: 'bg-cyan-100 text-cyan-600'
+    primary: "bg-blue-100 text-blue-600",
+    success: "bg-green-100 text-green-600",
+    warning: "bg-yellow-100 text-yellow-600",
+    danger: "bg-red-100 text-red-600",
+    accent: "bg-purple-100 text-purple-600",
+    info: "bg-cyan-100 text-cyan-600",
   };
 
   return (
-    <div 
+    <div
       onClick={onClick}
       className={`bg-white border rounded-xl p-4 hover:shadow-md transition-all duration-200 ${
-        onClick ? 'cursor-pointer hover:-translate-y-1' : ''
+        onClick ? "cursor-pointer hover:-translate-y-1" : ""
       } ${colorClasses[color]}`}
     >
       <div className="flex items-center justify-between mb-3">
@@ -184,17 +260,23 @@ const MetricCard: React.FC<{
           <Icon className="w-5 h-5" />
         </div>
         {trend && !loading && (
-          <span className={`flex items-center text-xs font-medium px-2 py-1 rounded-full ${
-            trend.isPositive 
-              ? 'bg-green-50 text-green-700' 
-              : 'bg-red-50 text-red-700'
-          }`}>
-            {trend.isPositive ? <ArrowUp className="w-3 h-3 mr-1" /> : <ArrowDown className="w-3 h-3 mr-1" />}
+          <span
+            className={`flex items-center text-xs font-medium px-2 py-1 rounded-full ${
+              trend.isPositive
+                ? "bg-green-50 text-green-700"
+                : "bg-red-50 text-red-700"
+            }`}
+          >
+            {trend.isPositive ? (
+              <ArrowUp className="w-3 h-3 mr-1" />
+            ) : (
+              <ArrowDown className="w-3 h-3 mr-1" />
+            )}
             {Math.abs(trend.value)}%
           </span>
         )}
       </div>
-      
+
       {loading ? (
         <div className="animate-pulse">
           <div className="h-7 bg-gray-200 rounded mb-2 w-3/4"></div>
@@ -211,25 +293,28 @@ const MetricCard: React.FC<{
 };
 
 // Status Badge Component
-const StatusBadge: React.FC<{ status: string; small?: boolean }> = ({ status, small = false }) => {
+const StatusBadge: React.FC<{ status: string; small?: boolean }> = ({
+  status,
+  small = false,
+}) => {
   const getStatusStyle = (status: string) => {
     switch (status?.toLowerCase()) {
-      case 'active':
-      case 'approved':
-      case 'completed':
-      case 'delivered':
+      case "active":
+      case "approved":
+      case "completed":
+      case "delivered":
         return "bg-green-100 text-green-800 border border-green-200";
-      case 'pending':
-      case 'processing':
-      case 'under_review':
+      case "pending":
+      case "processing":
+      case "under_review":
         return "bg-yellow-100 text-yellow-800 border border-yellow-200";
-      case 'rejected':
-      case 'cancelled':
-      case 'blocked':
-      case 'suspended':
+      case "rejected":
+      case "cancelled":
+      case "blocked":
+      case "suspended":
         return "bg-red-100 text-red-800 border border-red-200";
-      case 'shipped':
-      case 'in_progress':
+      case "shipped":
+      case "in_progress":
         return "bg-blue-100 text-blue-800 border border-blue-200";
       default:
         return "bg-gray-100 text-gray-800 border border-gray-200";
@@ -237,11 +322,13 @@ const StatusBadge: React.FC<{ status: string; small?: boolean }> = ({ status, sm
   };
 
   const getStatusText = (status: string) => {
-    return status?.replace(/_/g, ' ') || 'Unknown';
+    return status?.replace(/_/g, " ") || "Unknown";
   };
 
   return (
-    <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${getStatusStyle(status)} ${small ? 'text-xs px-2 py-0.5' : ''}`}>
+    <span
+      className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${getStatusStyle(status)} ${small ? "text-xs px-2 py-0.5" : ""}`}
+    >
       {getStatusText(status)}
     </span>
   );
@@ -250,50 +337,54 @@ const StatusBadge: React.FC<{ status: string; small?: boolean }> = ({ status, sm
 // Helper Functions
 const getProductStatusBadge = (product: Product) => {
   const status = product.status;
-  const isSuspended = product.is_suspended_by_admin;
-  
-  let color = 'bg-gray-100 text-gray-800';
+  const isSuspended = product.is_suspended_by_admin || status === "suspended";
+
+  let color = "bg-gray-100 text-gray-800";
   let Icon = Package;
   let text = status.charAt(0).toUpperCase() + status.slice(1);
-  
+
   switch (status) {
-    case 'active':
-      color = isSuspended ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800';
+    case "active":
+      color = isSuspended
+        ? "bg-red-100 text-red-800"
+        : "bg-green-100 text-green-800";
       Icon = isSuspended ? AlertTriangle : CheckCircle;
-      text = isSuspended ? 'Suspended' : 'Active';
+      text = isSuspended ? "Suspended" : "Active";
       break;
-    case 'inactive':
-      color = 'bg-gray-100 text-gray-800';
+    case "inactive":
+      color = "bg-gray-100 text-gray-800";
       Icon = EyeOff;
       break;
-    case 'draft':
-      color = 'bg-yellow-100 text-yellow-800';
+    case "draft":
+      color = "bg-yellow-100 text-yellow-800";
       Icon = Edit;
       break;
-    case 'pending':
-      color = 'bg-blue-100 text-blue-800';
+    case "pending":
+      color = "bg-blue-100 text-blue-800";
       Icon = Clock;
       break;
-    case 'suspended':
-      color = 'bg-red-100 text-red-800';
+    case "suspended":
+      color = "bg-red-100 text-red-800";
       Icon = AlertTriangle;
       break;
-    case 'under_review':
-      color = 'bg-orange-100 text-orange-800';
+    case "under_review":
+      color = "bg-orange-100 text-orange-800";
       Icon = ShieldAlert;
       break;
-    case 'rejected':
-      color = 'bg-red-100 text-red-800';
+    case "rejected":
+      color = "bg-red-100 text-red-800";
       Icon = Ban;
       break;
-    case 'archived':
-      color = 'bg-gray-200 text-gray-800';
+    case "archived":
+      color = "bg-gray-200 text-gray-800";
       Icon = Archive;
       break;
   }
-  
+
   return (
-    <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium ${color}`}>
+    <span
+      className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium ${color}`}
+    >
       <Icon className="w-3 h-3" />
       {text}
     </span>
@@ -327,15 +418,17 @@ const getStockBadge = (quantity: number, minLevel?: number) => {
 
 const getWarningBadge = (warningCount?: number) => {
   if (!warningCount || warningCount === 0) return null;
-  
-  let color = 'bg-yellow-100 text-yellow-800';
-  if (warningCount >= 3) color = 'bg-red-100 text-red-800';
-  else if (warningCount === 2) color = 'bg-orange-100 text-orange-800';
-  
+
+  let color = "bg-yellow-100 text-yellow-800";
+  if (warningCount >= 3) color = "bg-red-100 text-red-800";
+  else if (warningCount === 2) color = "bg-orange-100 text-orange-800";
+
   return (
-    <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium ${color}`}>
+    <span
+      className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium ${color}`}
+    >
       <AlertTriangle className="w-3 h-3" />
-      {warningCount} Warning{warningCount > 1 ? 's' : ''}
+      {warningCount} Warning{warningCount > 1 ? "s" : ""}
     </span>
   );
 };
@@ -344,22 +437,29 @@ const getWarningBadge = (warningCount?: number) => {
 const ActionButton: React.FC<{
   icon: React.ElementType;
   label: string;
-  variant?: 'primary' | 'secondary' | 'danger' | 'success' | 'warning';
+  variant?: "primary" | "secondary" | "danger" | "success" | "warning";
   onClick: () => void;
   disabled?: boolean;
-  size?: 'sm' | 'md';
-}> = ({ icon: Icon, label, variant = 'secondary', onClick, disabled = false, size = 'md' }) => {
+  size?: "sm" | "md";
+}> = ({
+  icon: Icon,
+  label,
+  variant = "secondary",
+  onClick,
+  disabled = false,
+  size = "md",
+}) => {
   const variantClasses = {
-    primary: 'bg-gray-900 text-white hover:bg-gray-800',
-    secondary: 'bg-gray-100 text-gray-700 hover:bg-gray-200',
-    danger: 'bg-red-600 text-white hover:bg-red-700',
-    success: 'bg-green-600 text-white hover:bg-green-700',
-    warning: 'bg-orange-600 text-white hover:bg-orange-700'
+    primary: "bg-gray-900 text-white hover:bg-gray-800",
+    secondary: "bg-gray-100 text-gray-700 hover:bg-gray-200",
+    danger: "bg-red-600 text-white hover:bg-red-700",
+    success: "bg-green-600 text-white hover:bg-green-700",
+    warning: "bg-orange-600 text-white hover:bg-orange-700",
   };
 
   const sizeClasses = {
-    sm: 'px-2.5 py-1.5 text-xs',
-    md: 'px-3 py-2 text-sm'
+    sm: "px-2.5 py-1.5 text-xs",
+    md: "px-3 py-2 text-sm",
   };
 
   return (
@@ -386,7 +486,7 @@ const ConfirmationModal: React.FC<{
   onConfirm: () => void;
   onCancel: () => void;
   isProcessing?: boolean;
-  type?: 'approve' | 'reject' | 'delete' | 'suspend' | 'activate' | 'warning';
+  type?: "approve" | "reject" | "delete" | "suspend" | "activate" | "warning";
 }> = ({
   isOpen,
   title,
@@ -396,17 +496,17 @@ const ConfirmationModal: React.FC<{
   onConfirm,
   onCancel,
   isProcessing = false,
-  type = 'approve'
+  type = "approve",
 }) => {
   if (!isOpen) return null;
 
   const typeColors = {
-    approve: 'bg-green-600 hover:bg-green-700',
-    reject: 'bg-red-600 hover:bg-red-700',
-    delete: 'bg-red-600 hover:bg-red-700',
-    suspend: 'bg-yellow-600 hover:bg-yellow-700',
-    activate: 'bg-green-600 hover:bg-green-700',
-    warning: 'bg-orange-600 hover:bg-orange-700'
+    approve: "bg-green-600 hover:bg-green-700",
+    reject: "bg-red-600 hover:bg-red-700",
+    delete: "bg-red-600 hover:bg-red-700",
+    suspend: "bg-yellow-600 hover:bg-yellow-700",
+    activate: "bg-green-600 hover:bg-green-700",
+    warning: "bg-orange-600 hover:bg-orange-700",
   };
 
   const typeIcons = {
@@ -415,7 +515,7 @@ const ConfirmationModal: React.FC<{
     delete: <Trash2 className="w-6 h-6 text-red-600" />,
     suspend: <AlertTriangle className="w-6 h-6 text-yellow-600" />,
     activate: <CheckCircle className="w-6 h-6 text-green-600" />,
-    warning: <AlertCircle className="w-6 h-6 text-orange-600" />
+    warning: <AlertCircle className="w-6 h-6 text-orange-600" />,
   };
 
   return (
@@ -423,20 +523,28 @@ const ConfirmationModal: React.FC<{
       <div className="bg-white rounded-xl shadow-xl max-w-md w-full border border-gray-200">
         <div className="p-6">
           <div className="flex items-center justify-center mb-4">
-            <div className={`p-3 rounded-full ${
-              type === 'approve' ? 'bg-green-100' :
-              type === 'reject' || type === 'delete' ? 'bg-red-100' :
-              type === 'suspend' ? 'bg-yellow-100' :
-              type === 'activate' ? 'bg-green-100' :
-              'bg-orange-100'
-            }`}>
+            <div
+              className={`p-3 rounded-full ${
+                type === "approve"
+                  ? "bg-green-100"
+                  : type === "reject" || type === "delete"
+                    ? "bg-red-100"
+                    : type === "suspend"
+                      ? "bg-yellow-100"
+                      : type === "activate"
+                        ? "bg-green-100"
+                        : "bg-orange-100"
+              }`}
+            >
               {typeIcons[type]}
             </div>
           </div>
-          
-          <h3 className="text-lg font-semibold text-gray-900 text-center mb-2">{title}</h3>
+
+          <h3 className="text-lg font-semibold text-gray-900 text-center mb-2">
+            {title}
+          </h3>
           <p className="text-gray-600 text-center mb-6">{message}</p>
-          
+
           <div className="flex gap-3">
             <button
               onClick={onCancel}
@@ -452,7 +560,7 @@ const ConfirmationModal: React.FC<{
                 typeColors[type]
               } disabled:opacity-50`}
             >
-              {isProcessing ? 'Processing...' : confirmLabel}
+              {isProcessing ? "Processing..." : confirmLabel}
             </button>
           </div>
         </div>
@@ -470,22 +578,22 @@ const WarningModal: React.FC<{
   isProcessing?: boolean;
 }> = ({ isOpen, product, onClose, onSubmit, isProcessing = false }) => {
   const [formData, setFormData] = useState<WarningFormData>({
-    productId: '',
-    reason: 'other',
-    severity: 'medium',
-    message: '',
+    productId: "",
+    reason: "other",
+    severity: "medium",
+    message: "",
     notifySeller: true,
     suspendProduct: false,
     suspensionDuration: 7,
-    suspensionUnit: 'days',
-    adminNote: ''
+    suspensionUnit: "days",
+    adminNote: "",
   });
 
   useEffect(() => {
     if (product) {
       setFormData({
         ...formData,
-        productId: product.id
+        productId: product.id,
       });
     }
   }, [product]);
@@ -494,7 +602,7 @@ const WarningModal: React.FC<{
 
   const handleSubmit = () => {
     if (!formData.message.trim()) {
-      toast.error('Please enter a warning message');
+      toast.error("Please enter a warning message");
       return;
     }
     onSubmit(formData);
@@ -505,120 +613,172 @@ const WarningModal: React.FC<{
       <div className="bg-white rounded-xl shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
         <div className="p-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-gray-900">Issue Product Warning</h3>
-            <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded-lg">
+            <h3 className="text-lg font-semibold text-gray-900">
+              Issue Product Warning
+            </h3>
+            <button
+              onClick={onClose}
+              className="p-1 hover:bg-gray-100 rounded-lg"
+            >
               <X className="w-5 h-5 text-gray-600" />
             </button>
           </div>
-          
+
           <div className="mb-4">
             <p className="text-sm text-gray-600 mb-2">
               Product: <span className="font-medium">{product.name}</span>
             </p>
             <p className="text-sm text-gray-600">
-              Seller: <span className="font-medium">{product.seller_business || product.seller_name}</span>
+              Seller:{" "}
+              <span className="font-medium">
+                {product.seller_business || product.seller_name}
+              </span>
             </p>
           </div>
-          
+
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Reason</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Reason
+              </label>
               <select
                 value={formData.reason}
-                onChange={(e) => setFormData({ ...formData, reason: e.target.value as any })}
+                onChange={(e) =>
+                  setFormData({ ...formData, reason: e.target.value as any })
+                }
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
               >
                 <option value="fake_product">Fake/Imitation Product</option>
                 <option value="misleading_info">Misleading Information</option>
                 <option value="poor_quality">Poor Quality</option>
-                <option value="copyright_issue">Copyright/Trademark Issue</option>
+                <option value="copyright_issue">
+                  Copyright/Trademark Issue
+                </option>
                 <option value="policy_violation">Policy Violation</option>
                 <option value="customer_complaints">Customer Complaints</option>
                 <option value="other">Other</option>
               </select>
             </div>
-            
+
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Severity</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Severity
+              </label>
               <div className="flex gap-2">
-                {(['low', 'medium', 'high', 'critical'] as const).map(severity => (
-                  <button
-                    key={severity}
-                    type="button"
-                    onClick={() => setFormData({ ...formData, severity })}
-                    className={`flex-1 py-2 rounded-lg text-sm font-medium ${
-                      formData.severity === severity
-                        ? severity === 'low' ? 'bg-green-100 text-green-800 border border-green-300' :
-                          severity === 'medium' ? 'bg-yellow-100 text-yellow-800 border border-yellow-300' :
-                          severity === 'high' ? 'bg-orange-100 text-orange-800 border border-orange-300' :
-                          'bg-red-100 text-red-800 border border-red-300'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200 border border-transparent'
-                    }`}
-                  >
-                    {severity.charAt(0).toUpperCase() + severity.slice(1)}
-                  </button>
-                ))}
+                {(["low", "medium", "high", "critical"] as const).map(
+                  (severity) => (
+                    <button
+                      key={severity}
+                      type="button"
+                      onClick={() => setFormData({ ...formData, severity })}
+                      className={`flex-1 py-2 rounded-lg text-sm font-medium ${
+                        formData.severity === severity
+                          ? severity === "low"
+                            ? "bg-green-100 text-green-800 border border-green-300"
+                            : severity === "medium"
+                              ? "bg-yellow-100 text-yellow-800 border border-yellow-300"
+                              : severity === "high"
+                                ? "bg-orange-100 text-orange-800 border border-orange-300"
+                                : "bg-red-100 text-red-800 border border-red-300"
+                          : "bg-gray-100 text-gray-700 hover:bg-gray-200 border border-transparent"
+                      }`}
+                    >
+                      {severity.charAt(0).toUpperCase() + severity.slice(1)}
+                    </button>
+                  ),
+                )}
               </div>
             </div>
-            
+
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Message to Seller</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Message to Seller
+              </label>
               <textarea
                 value={formData.message}
-                onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, message: e.target.value })
+                }
                 rows={3}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
                 placeholder="Explain the issue to the seller..."
               />
             </div>
-            
+
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Admin Note (Internal)</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Admin Note (Internal)
+              </label>
               <textarea
                 value={formData.adminNote}
-                onChange={(e) => setFormData({ ...formData, adminNote: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, adminNote: e.target.value })
+                }
                 rows={2}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
                 placeholder="Internal notes for admin team..."
               />
             </div>
-            
+
             <div className="space-y-2">
               <label className="flex items-center gap-2">
                 <input
                   type="checkbox"
                   checked={formData.notifySeller}
-                  onChange={(e) => setFormData({ ...formData, notifySeller: e.target.checked })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, notifySeller: e.target.checked })
+                  }
                   className="rounded text-blue-500"
                 />
-                <span className="text-sm text-gray-700">Notify seller about this warning</span>
+                <span className="text-sm text-gray-700">
+                  Notify seller about this warning
+                </span>
               </label>
-              
+
               <label className="flex items-center gap-2">
                 <input
                   type="checkbox"
                   checked={formData.suspendProduct}
-                  onChange={(e) => setFormData({ ...formData, suspendProduct: e.target.checked })}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      suspendProduct: e.target.checked,
+                    })
+                  }
                   className="rounded text-blue-500"
                 />
-                <span className="text-sm text-gray-700">Suspend product temporarily</span>
+                <span className="text-sm text-gray-700">
+                  Suspend product temporarily
+                </span>
               </label>
             </div>
-            
+
             {formData.suspendProduct && (
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Suspension Duration</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Suspension Duration
+                </label>
                 <div className="flex gap-2">
                   <input
                     type="number"
                     value={formData.suspensionDuration}
-                    onChange={(e) => setFormData({ ...formData, suspensionDuration: Number(e.target.value) })}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        suspensionDuration: Number(e.target.value),
+                      })
+                    }
                     className="w-20 px-3 py-2 border border-gray-300 rounded-lg text-sm"
                     min="1"
                   />
                   <select
                     value={formData.suspensionUnit}
-                    onChange={(e) => setFormData({ ...formData, suspensionUnit: e.target.value as any })}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        suspensionUnit: e.target.value as any,
+                      })
+                    }
                     className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm"
                   >
                     <option value="hours">Hours</option>
@@ -629,7 +789,7 @@ const WarningModal: React.FC<{
               </div>
             )}
           </div>
-          
+
           <div className="flex gap-3 mt-6">
             <button
               onClick={onClose}
@@ -642,7 +802,7 @@ const WarningModal: React.FC<{
               disabled={isProcessing || !formData.message.trim()}
               className="flex-1 py-2.5 px-4 bg-orange-600 text-white rounded-lg font-medium hover:bg-orange-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isProcessing ? 'Processing...' : 'Issue Warning'}
+              {isProcessing ? "Processing..." : "Issue Warning"}
             </button>
           </div>
         </div>
@@ -662,13 +822,13 @@ const SellerDetailModal: React.FC<{
   if (!isOpen || !seller) return null;
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+    return new Date(dateString).toLocaleDateString("en-US", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
@@ -678,8 +838,12 @@ const SellerDetailModal: React.FC<{
         <div className="p-6">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-xl font-bold text-gray-900">Seller Application Details</h2>
-              <p className="text-sm text-gray-600">Application ID: {seller.application_id}</p>
+              <h2 className="text-xl font-bold text-gray-900">
+                Seller Application Details
+              </h2>
+              <p className="text-sm text-gray-600">
+                Application ID: {seller.application_id}
+              </p>
             </div>
             <button
               onClick={onClose}
@@ -696,8 +860,12 @@ const SellerDetailModal: React.FC<{
                   <Building className="w-5 h-5 text-gray-700" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900">{seller.business_name}</h3>
-                  <p className="text-sm text-gray-600">Applied on {formatDate(seller.submitted_at)}</p>
+                  <h3 className="font-semibold text-gray-900">
+                    {seller.business_name}
+                  </h3>
+                  <p className="text-sm text-gray-600">
+                    Applied on {formatDate(seller.submitted_at)}
+                  </p>
                 </div>
               </div>
               <StatusBadge status={seller.status} />
@@ -714,7 +882,9 @@ const SellerDetailModal: React.FC<{
                 <div className="space-y-3">
                   <div>
                     <p className="text-xs text-gray-500 mb-1">Full Name</p>
-                    <p className="font-medium text-gray-900">{seller.full_name}</p>
+                    <p className="font-medium text-gray-900">
+                      {seller.full_name}
+                    </p>
                   </div>
                   <div>
                     <p className="text-xs text-gray-500 mb-1">Email Address</p>
@@ -722,7 +892,9 @@ const SellerDetailModal: React.FC<{
                   </div>
                   <div>
                     <p className="text-xs text-gray-500 mb-1">Contact Number</p>
-                    <p className="font-medium text-gray-900">{seller.contact_number}</p>
+                    <p className="font-medium text-gray-900">
+                      {seller.contact_number}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -735,15 +907,21 @@ const SellerDetailModal: React.FC<{
                 <div className="space-y-3">
                   <div>
                     <p className="text-xs text-gray-500 mb-1">Business Type</p>
-                    <p className="font-medium text-gray-900 capitalize">{seller.business_type?.replace('_', ' ')}</p>
+                    <p className="font-medium text-gray-900 capitalize">
+                      {seller.business_type?.replace("_", " ")}
+                    </p>
                   </div>
                   <div>
                     <p className="text-xs text-gray-500 mb-1">CR Number</p>
-                    <p className="font-medium text-gray-900">{seller.cr_number}</p>
+                    <p className="font-medium text-gray-900">
+                      {seller.cr_number}
+                    </p>
                   </div>
                   <div>
                     <p className="text-xs text-gray-500 mb-1">Location</p>
-                    <p className="font-medium text-gray-900">{seller.city}, {seller.address}</p>
+                    <p className="font-medium text-gray-900">
+                      {seller.city}, {seller.address}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -755,7 +933,9 @@ const SellerDetailModal: React.FC<{
                   <FileText className="w-4 h-4" />
                   Business Description
                 </h3>
-                <p className="text-gray-700 text-sm">{seller.business_description}</p>
+                <p className="text-gray-700 text-sm">
+                  {seller.business_description}
+                </p>
               </div>
 
               <div className="bg-white border border-gray-200 rounded-lg p-4">
@@ -766,15 +946,21 @@ const SellerDetailModal: React.FC<{
                 <div className="space-y-3">
                   <div>
                     <p className="text-xs text-gray-500 mb-1">Bank Name</p>
-                    <p className="font-medium text-gray-900">{seller.bank_name}</p>
+                    <p className="font-medium text-gray-900">
+                      {seller.bank_name}
+                    </p>
                   </div>
                   <div>
                     <p className="text-xs text-gray-500 mb-1">Account Number</p>
-                    <p className="font-medium text-gray-900">{seller.account_number}</p>
+                    <p className="font-medium text-gray-900">
+                      {seller.account_number}
+                    </p>
                   </div>
                   <div>
                     <p className="text-xs text-gray-500 mb-1">IBAN</p>
-                    <p className="font-medium text-gray-900 font-mono">{seller.iban}</p>
+                    <p className="font-medium text-gray-900 font-mono">
+                      {seller.iban}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -807,7 +993,7 @@ const SellerDetailModal: React.FC<{
               >
                 Close
               </button>
-              {seller.status === 'pending' && (
+              {seller.status === "pending" && (
                 <>
                   <button
                     onClick={() => onReject(seller)}
@@ -834,122 +1020,124 @@ const SellerDetailModal: React.FC<{
 // Main AdminDashboard Component
 const AdminDashboard: React.FC<AdminDashboardProps> = ({
   onNavigate,
-  section: propSection = 'dashboard'
+  section: propSection = "dashboard",
 }) => {
   const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState(propSection);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [showMobileMenu, setShowMobileMenu] = useState(false);
-  
+
   // Use all hooks with error handling
-  const { 
-    metrics, 
-    loading: dashboardLoading, 
-    refreshMetrics 
+  // Replace ALL hook destructuring in your AdminDashboard with this:
+
+  const {
+    metrics,
+    loading: dashboardLoading,
+    refresh: refreshMetrics,
   } = useDashboardData();
-  
-  const { 
-    sellers, 
-    sellerApplications, 
-    loading: sellersLoading, 
-    refreshSellers,
+
+  const {
+    sellers,
+    sellerApplications,
+    loading: sellersLoading,
+    refresh: refreshSellers,
     approveSeller,
-    rejectSeller
+    rejectSeller,
   } = useSellers();
-  
-  const { 
-    products, 
-    filteredProducts,
+
+  const {
+    products,
+    pendingProducts,
     loading: productsLoading,
-    refreshProducts,
+    refresh: refreshProducts,
     updateProduct,
     deleteProduct,
     suspendProduct,
     activateProduct,
-    issueWarning
+    issueWarning,
   } = useProducts();
-  
-  const { 
-    orders, 
-    recentOrders, 
-    loading: ordersLoading, 
-    refreshOrders 
-  } = useOrders();
-  
-  const { 
-    logs, 
-    loading: logsLoading, 
-    refreshLogs 
-  } = useActivityLogs();
-  
-  const { 
-    unreadCount, 
-    refreshNotifications 
-  } = useNotifications();
-  
+
   const {
-    reports,
+    orders,
+    recentOrders,
+    loading: ordersLoading,
+    refresh: refreshOrders,
+  } = useOrders();
+
+  const {
+    activities: logs,
+    loading: logsLoading,
+    refresh: refreshLogs,
+  } = useActivityLogs();
+
+  const { unreadCount, refetch: refreshNotifications } = useNotifications();
+
+  const {
+    savedReports: reports,
     loading: reportsLoading,
-    refreshReports
+    refresh: refreshReports,
   } = useAdminReports();
 
-  const { 
+  const {
     reviews,
     loading: reviewsLoading,
-    refreshReviews
+    refresh: refreshReviews,
   } = useReviews();
 
-  const { 
-    financeData,
-    loading: financeLoading,
-    refreshFinance
+  const {
+    summary: financeData,
+    summaryLoading: financeLoading,
+    refresh: refreshFinance,
   } = useFinance();
 
-  const { 
+  const {
     walletData,
     loading: walletLoading,
-    refreshWallet
+    refresh: refreshWallet,
   } = useWallet();
 
-  const { 
+  const {
     categories,
     loading: categoriesLoading,
-    refreshCategories
+    refresh: refreshCategories,
   } = useCategories();
 
-  const { 
+  const {
     contracts,
     loading: contractsLoading,
-    refreshContracts
+    refresh: refreshContracts,
   } = useContracts();
 
-  const { 
-    ads,
+  const {
+    campaigns: ads,
     loading: adsLoading,
-    refreshAds
+    refresh: refreshAds,
   } = useAdvertising();
 
   // Local state
   const [isProcessing, setIsProcessing] = useState(false);
-  const [selectedSeller, setSelectedSeller] = useState<SellerApplication | null>(null);
+  const [selectedSeller, setSelectedSeller] =
+    useState<SellerApplication | null>(null);
   const [showSellerDetail, setShowSellerDetail] = useState(false);
-  const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'approved' | 'rejected'>('all');
-  
+  const [statusFilter, setStatusFilter] = useState<
+    "all" | "pending" | "approved" | "rejected"
+  >("all");
+
   const [productFilters, setProductFilters] = useState({
-    search: '',
-    status: '',
-    categoryType: '',
-    usageType: '',
-    stockStatus: '',
-    sellerId: '',
+    search: "",
+    status: "",
+    categoryType: "",
+    usageType: "",
+    stockStatus: "",
+    sellerId: "",
     minRating: 0,
     hasWarnings: null as boolean | null,
-    isSuspended: null as boolean | null
+    isSuspended: null as boolean | null,
   });
-  
+
   const [modalState, setModalState] = useState<{
     isOpen: boolean;
-    type: 'approve' | 'reject' | 'delete' | 'suspend' | 'activate' | 'warning';
+    type: "approve" | "reject" | "delete" | "suspend" | "activate" | "warning";
     title: string;
     message: string;
     data: any;
@@ -958,112 +1146,385 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [productToAction, setProductToAction] = useState<Product | null>(null);
   const [showWarningModal, setShowWarningModal] = useState(false);
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
-  const [bulkAction, setBulkAction] = useState('');
-  const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
+  const [bulkAction, setBulkAction] = useState("");
+  const [viewMode, setViewMode] = useState<"list" | "grid">("list");
 
+  // Filter products based on filters
+  const filteredProducts = React.useMemo(() => {
+    if (!products) return [];
+
+    return products.filter((product: Product) => {
+      // Search filter
+      if (
+        productFilters.search &&
+        !product.name
+          .toLowerCase()
+          .includes(productFilters.search.toLowerCase())
+      ) {
+        return false;
+      }
+
+      // Status filter
+      if (productFilters.status && product.status !== productFilters.status) {
+        return false;
+      }
+
+      // Category type filter
+      if (
+        productFilters.categoryType &&
+        product.category_type !== productFilters.categoryType
+      ) {
+        return false;
+      }
+
+      // Stock status filter
+      if (productFilters.stockStatus) {
+        if (
+          productFilters.stockStatus === "out_of_stock" &&
+          product.stock_quantity > 0
+        ) {
+          return false;
+        }
+        if (
+          productFilters.stockStatus === "in_stock" &&
+          product.stock_quantity === 0
+        ) {
+          return false;
+        }
+        if (
+          productFilters.stockStatus === "low_stock" &&
+          (!product.min_stock_level ||
+            product.stock_quantity > product.min_stock_level)
+        ) {
+          return false;
+        }
+      }
+
+      // Seller filter
+      if (
+        productFilters.sellerId &&
+        product.seller_id !== productFilters.sellerId
+      ) {
+        return false;
+      }
+
+      // Has warnings filter
+      if (productFilters.hasWarnings !== null) {
+        const hasWarnings = (product.warning_count || 0) > 0;
+        if (productFilters.hasWarnings !== hasWarnings) {
+          return false;
+        }
+      }
+
+      // Is suspended filter
+      if (productFilters.isSuspended !== null) {
+        const isSuspended =
+          product.is_suspended_by_admin || product.status === "suspended";
+        if (productFilters.isSuspended !== isSuspended) {
+          return false;
+        }
+      }
+
+      // Rating filter
+      if (
+        productFilters.minRating > 0 &&
+        product.rating < productFilters.minRating
+      ) {
+        return false;
+      }
+
+      return true;
+    });
+  }, [products, productFilters]);
+  //  sideBar navigation items
   const navItems = [
-    { id: 'dashboard', icon: Home, label: 'Dashboard', permission: 'view_dashboard' },
-    { id: 'sellers', icon: Users, label: 'Sellers', permission: 'manage_sellers' },
-    { id: 'products', icon: Package, label: 'Products', permission: 'manage_products' },
-    { id: 'orders', icon: ShoppingBag, label: 'Orders', permission: 'manage_orders' },
-    { id: 'reviews', icon: Star, label: 'Reviews', permission: 'manage_products' },
-    { id: 'finance', icon: DollarSign, label: 'Finance', permission: 'manage_finance' },
-    { id: 'wallet', icon: Wallet, label: 'Wallet', permission: 'manage_finance' },
-    { id: 'categories', icon: FolderTree, label: 'Categories', permission: 'manage_products' },
-    { id: 'contracts', icon: FileCheck, label: 'Contracts', permission: 'manage_orders' },
-    { id: 'advertising', icon: Megaphone, label: 'Advertising', permission: 'manage_ads' },
-    { id: 'analytics', icon: BarChart, label: 'Analytics', permission: 'view_reports' },
-    { id: 'activity', icon: Activity, label: 'Activity Logs', permission: 'view_logs' },
-    { id: 'settings', icon: Settings, label: 'Settings', permission: 'manage_settings' }
+    {
+      id: "dashboard",
+      icon: Home,
+      label: "Dashboard",
+      permission: "view_dashboard",
+    },
+
+    {
+      id: "users",
+      icon: Users,
+      label: "Users",
+      permission: "manage_users",
+   
+      // dropdownItems: [
+      //   {
+      //     id: "all-users",
+      //     label: "All Users",
+      //     permission: "manage_users",
+      //     href: "/admin/users/all",
+      //   },
+        
+      //   {
+      //     id: "admin-users",
+      //     label: "Admins",
+      //     permission: "manage_admins",
+      //     href: "/admin/users/admins",
+      //   },
+      //   {
+      //     id: "seller-users",
+      //     label: "Sellers",
+      //     permission: "manage_sellers",
+      //     href: "/admin/users/sellers",
+      //   },
+      //  ],
+    },
+
+    // Sellers dropdown
+    {
+      id: "sellers",
+      icon: Users,
+      label: "Sellers",
+      permission: "manage_sellers",
+    },
+
+    // Products dropdown
+    {
+      id: "products",
+      icon: Package,
+      label: "Products",
+      permission: "manage_products",
+      dropdown: true,
+      
+    },
+
+    // Orders dropdown
+    {
+      id: "orders",
+      icon: ShoppingBag,
+      label: "Orders",
+      permission: "manage_orders",
+      
+    },
+
+    // Reviews dropdown
+    {
+      id: "reviews",
+      icon: Star,
+      label: "Reviews",
+      permission: "manage_products",
+      dropdown: true,
+    },
+
+    // Finance dropdown
+    {
+      id: "finance",
+      icon: DollarSign,
+      label: "Finance",
+      permission: "manage_finance",
+      dropdown: true,
+    },
+
+    // Wallet dropdown
+    {
+      id: "wallet",
+      icon: Wallet,
+      label: "Wallet",
+      permission: "manage_finance",
+      dropdown: true,
+    },
+
+    // Categories dropdown
+    {
+      id: "categories",
+      icon: FolderTree,
+      label: "Categories",
+      permission: "manage_products",
+      dropdown: true,
+    },
+
+    // Contracts dropdown
+    {
+      id: "contracts",
+      icon: FileCheck,
+      label: "Contracts",
+      permission: "manage_orders",
+      dropdown: true,
+    },
+
+    // Advertising dropdown
+    {
+      id: "advertising",
+      icon: Megaphone,
+      label: "Advertising",
+      permission: "manage_ads",
+      dropdown: true,
+    },
+
+    // Analytics dropdown
+    {
+      id: "analytics",
+      icon: BarChart,
+      label: "Analytics",
+      permission: "view_reports",
+      dropdown: true,
+    },
+
+    // Activity Logs dropdown
+    {
+      id: "activity",
+      icon: Activity,
+      label: "Activity Logs",
+      permission: "view_logs",
+      dropdown: true,
+    },
+
+    {
+      id: "settings",
+      icon: Settings,
+      label: "Settings",
+      permission: "manage_settings",
+      dropdown: true,
+      dropdownItems: [
+        {
+          id: "general-settings",
+          label: "General Settings",
+          permission: "manage_settings",
+          href: "/admin/settings/general",
+        },
+        {
+          id: "payment-settings",
+          label: "Payment Settings",
+          permission: "manage_settings",
+          href: "/admin/settings/payment",
+        },
+        {
+          id: "shipping-settings",
+          label: "Shipping Settings",
+          permission: "manage_settings",
+          href: "/admin/settings/shipping",
+        },
+        {
+          id: "notification-settings",
+          label: "Notifications",
+          permission: "manage_settings",
+          href: "/admin/settings/notifications",
+        },
+        {
+          id: "tax-settings",
+          label: "Tax Settings",
+          permission: "manage_settings",
+          href: "/admin/settings/tax",
+        },
+        {
+          id: "security-settings",
+          label: "Security",
+          permission: "manage_settings",
+          href: "/admin/settings/security",
+        },
+        {
+          id: "email-settings",
+          label: "Email Settings",
+          permission: "manage_settings",
+          href: "/admin/settings/email",
+        },
+        {
+          id: "api-settings",
+          label: "API Settings",
+          permission: "manage_settings",
+          href: "/admin/settings/api",
+        },
+        {
+          id: "backup-settings",
+          label: "Backup & Restore",
+          permission: "manage_settings",
+          href: "/admin/settings/backup",
+        },
+      ],
+    },
   ];
 
-  // Handle issue warning - FIXED to use hook
+  // Handle issue warning
   const handleIssueWarning = async (formData: WarningFormData) => {
     if (!productToAction) return;
-    
+
     setIsProcessing(true);
     try {
       await issueWarning(productToAction.id, formData);
-      toast.success('Warning issued successfully');
+      toast.success("Warning issued successfully");
       await refreshProducts();
       setShowWarningModal(false);
       setProductToAction(null);
     } catch (error: any) {
-      toast.error('Failed to issue warning: ' + error.message);
+      toast.error("Failed to issue warning: " + error.message);
     } finally {
       setIsProcessing(false);
     }
   };
 
-  // Handle suspend product - FIXED to use hook
+  // Handle suspend product
   const handleSuspendProduct = async (product: Product) => {
     setIsProcessing(true);
     try {
-      await suspendProduct(product.id, 'Suspended by admin');
-      toast.success('Product suspended successfully');
+      await suspendProduct(product.id, "Suspended by admin");
+      toast.success("Product suspended successfully");
       await refreshProducts();
     } catch (error: any) {
-      toast.error('Failed to suspend product: ' + error.message);
+      toast.error("Failed to suspend product: " + error.message);
     } finally {
       setIsProcessing(false);
     }
   };
 
-  // Handle activate product - FIXED to use hook
+  // Handle activate product
   const handleActivateProduct = async (product: Product) => {
     setIsProcessing(true);
     try {
       await activateProduct(product.id);
-      toast.success('Product activated successfully');
+      toast.success("Product activated successfully");
       await refreshProducts();
     } catch (error: any) {
-      toast.error('Failed to activate product: ' + error.message);
+      toast.error("Failed to activate product: " + error.message);
     } finally {
       setIsProcessing(false);
     }
   };
 
-  // Handle delete product - FIXED to use hook
+  // Handle delete product
   const handleDeleteProduct = async (product: Product) => {
     setIsProcessing(true);
     try {
       await deleteProduct(product.id);
-      toast.success('Product deleted successfully');
+      toast.success("Product deleted successfully");
       await refreshProducts();
     } catch (error: any) {
-      toast.error('Failed to delete product: ' + error.message);
+      toast.error("Failed to delete product: " + error.message);
     } finally {
       setIsProcessing(false);
     }
   };
 
-  // Handle approve seller - FIXED to use hook
+  // Handle approve seller
   const handleApproveSeller = async (seller: SellerApplication) => {
     setIsProcessing(true);
     try {
       await approveSeller(seller.id);
-      toast.success('Seller approved successfully');
+      toast.success("Seller approved successfully");
       await refreshSellers();
       setShowSellerDetail(false);
       setSelectedSeller(null);
     } catch (error: any) {
-      toast.error('Failed to approve seller');
+      toast.error("Failed to approve seller");
     } finally {
       setIsProcessing(false);
     }
   };
 
-  // Handle reject seller - FIXED to use hook
+  // Handle reject seller
   const handleRejectSeller = async (seller: SellerApplication) => {
     setIsProcessing(true);
     try {
-      await rejectSeller(seller.id, 'Application rejected by admin');
-      toast.success('Seller application rejected');
+      await rejectSeller(seller.id, "Application rejected by admin");
+      toast.success("Seller application rejected");
       await refreshSellers();
       setShowSellerDetail(false);
       setSelectedSeller(null);
     } catch (error: any) {
-      toast.error('Failed to reject seller');
+      toast.error("Failed to reject seller");
     } finally {
       setIsProcessing(false);
     }
@@ -1081,43 +1542,47 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
   // Bulk actions handler
   const handleBulkAction = async () => {
     if (!bulkAction || selectedProducts.length === 0) {
-      toast.error('Please select products and an action');
+      toast.error("Please select products and an action");
       return;
     }
 
     setIsProcessing(true);
     try {
       switch (bulkAction) {
-        case 'activate':
-          await Promise.all(selectedProducts.map(id => activateProduct(id)));
+        case "activate":
+          await Promise.all(selectedProducts.map((id) => activateProduct(id)));
           toast.success(`${selectedProducts.length} products activated`);
           break;
-          
-        case 'deactivate':
-          await Promise.all(selectedProducts.map(id => 
-            updateProduct(id, { status: 'inactive' })
-          ));
+
+        case "deactivate":
+          await Promise.all(
+            selectedProducts.map((id) =>
+              updateProduct(id, { status: "inactive" } as any),
+            ),
+          );
           toast.success(`${selectedProducts.length} products deactivated`);
           break;
-          
-        case 'suspend':
-          await Promise.all(selectedProducts.map(id => 
-            suspendProduct(id, 'Bulk suspension by admin')
-          ));
+
+        case "suspend":
+          await Promise.all(
+            selectedProducts.map((id) =>
+              suspendProduct(id, "Bulk suspension by admin"),
+            ),
+          );
           toast.success(`${selectedProducts.length} products suspended`);
           break;
-          
-        case 'delete':
-          await Promise.all(selectedProducts.map(id => deleteProduct(id)));
+
+        case "delete":
+          await Promise.all(selectedProducts.map((id) => deleteProduct(id)));
           toast.success(`${selectedProducts.length} products deleted`);
           break;
       }
 
       await refreshProducts();
       setSelectedProducts([]);
-      setBulkAction('');
+      setBulkAction("");
     } catch (error: any) {
-      toast.error('Failed to perform bulk action: ' + error.message);
+      toast.error("Failed to perform bulk action: " + error.message);
     } finally {
       setIsProcessing(false);
     }
@@ -1125,43 +1590,43 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
   // Selection handlers
   const handleSelectAllProducts = (checked: boolean) => {
-    if (checked && filteredProducts) {
-      setSelectedProducts(filteredProducts.map(p => p.id));
+    if (checked && filteredProducts.length > 0) {
+      setSelectedProducts(filteredProducts.map((p) => p.id));
     } else {
       setSelectedProducts([]);
     }
   };
 
   const toggleProductSelection = (productId: string) => {
-    setSelectedProducts(prev =>
+    setSelectedProducts((prev) =>
       prev.includes(productId)
-        ? prev.filter(id => id !== productId)
-        : [...prev, productId]
+        ? prev.filter((id) => id !== productId)
+        : [...prev, productId],
     );
   };
 
   // Formatting functions
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
       minimumFractionDigits: 0,
-      maximumFractionDigits: 0
+      maximumFractionDigits: 0,
     }).format(amount);
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric'
+    return new Date(dateString).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
     });
   };
 
   const formatTime = (dateString: string) => {
-    return new Date(dateString).toLocaleTimeString('en-US', {
-      hour: '2-digit',
-      minute: '2-digit'
+    return new Date(dateString).toLocaleTimeString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
@@ -1176,11 +1641,11 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
         refreshNotifications(),
         refreshReviews(),
         refreshFinance(),
-        refreshWallet()
+        refreshWallet(),
       ]);
-      toast.success('Data refreshed successfully');
+      toast.success("Data refreshed successfully");
     } catch (error) {
-      toast.error('Failed to refresh data');
+      toast.error("Failed to refresh data");
     }
   };
 
@@ -1193,20 +1658,20 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const openApproveModal = (seller: SellerApplication) => {
     setModalState({
       isOpen: true,
-      type: 'approve',
-      title: 'Approve Seller Application',
+      type: "approve",
+      title: "Approve Seller Application",
       message: `Are you sure you want to approve ${seller.business_name}? This will activate their seller account.`,
-      data: seller
+      data: seller,
     });
   };
 
   const openRejectModal = (seller: SellerApplication) => {
     setModalState({
       isOpen: true,
-      type: 'reject',
-      title: 'Reject Seller Application',
+      type: "reject",
+      title: "Reject Seller Application",
       message: `Are you sure you want to reject ${seller.business_name}'s application? This action cannot be undone.`,
-      data: seller
+      data: seller,
     });
   };
 
@@ -1219,10 +1684,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
     setProductToAction(product);
     setModalState({
       isOpen: true,
-      type: 'delete',
-      title: 'Delete Product',
+      type: "delete",
+      title: "Delete Product",
       message: `Are you sure you want to delete "${product.name}"? This action cannot be undone.`,
-      data: product
+      data: product,
     });
   };
 
@@ -1230,10 +1695,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
     setProductToAction(product);
     setModalState({
       isOpen: true,
-      type: 'suspend',
-      title: 'Suspend Product',
+      type: "suspend",
+      title: "Suspend Product",
       message: `Are you sure you want to suspend "${product.name}"? This product will be hidden from the platform.`,
-      data: product
+      data: product,
     });
   };
 
@@ -1241,10 +1706,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
     setProductToAction(product);
     setModalState({
       isOpen: true,
-      type: 'activate',
-      title: 'Activate Product',
+      type: "activate",
+      title: "Activate Product",
       message: `Are you sure you want to activate "${product.name}"? This product will be visible on the platform.`,
-      data: product
+      data: product,
     });
   };
 
@@ -1253,40 +1718,40 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
     const loadSectionData = async () => {
       try {
         switch (activeSection) {
-          case 'dashboard':
+          case "dashboard":
             await refreshMetrics();
             break;
-          case 'sellers':
+          case "sellers":
             await refreshSellers();
             break;
-          case 'products':
+          case "products":
             await refreshProducts();
             break;
-          case 'orders':
+          case "orders":
             await refreshOrders();
             break;
-          case 'reviews':
+          case "reviews":
             await refreshReviews();
             break;
-          case 'finance':
+          case "finance":
             await refreshFinance();
             break;
-          case 'wallet':
+          case "wallet":
             await refreshWallet();
             break;
-          case 'categories':
+          case "categories":
             await refreshCategories();
             break;
-          case 'contracts':
+          case "contracts":
             await refreshContracts();
             break;
-          case 'advertising':
+          case "advertising":
             await refreshAds();
             break;
-          case 'analytics':
+          case "analytics":
             await refreshReports();
             break;
-          case 'activity':
+          case "activity":
             await refreshLogs();
             break;
         }
@@ -1308,20 +1773,20 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
   const getLocalStorageUser = () => {
     try {
-      const adminToken = localStorage.getItem('admin_token');
-      const userRole = localStorage.getItem('userRole');
-      
-      if (adminToken === 'true' && userRole === 'admin') {
+      const adminToken = localStorage.getItem("admin_token");
+      const userRole = localStorage.getItem("userRole");
+
+      if (adminToken === "true" && userRole === "admin") {
         return {
-          id: 'admin-id-123',
-          email: 'admin@premiumfurniture.com',
+          id: "admin-id-123",
+          email: "admin@premiumfurniture.com",
           user_metadata: {
-            full_name: 'Admin User',
-            role: 'admin'
-          }
+            full_name: "Admin User",
+            role: "admin",
+          },
         };
       }
-      
+
       return null;
     } catch (error) {
       return null;
@@ -1332,29 +1797,62 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
   const handleSignOut = async () => {
     try {
-      localStorage.removeItem('admin_token');
-      localStorage.removeItem('userRole');
-      localStorage.removeItem('demoMode');
-      navigate('/');
-      toast.success('Signed out successfully');
+      localStorage.removeItem("admin_token");
+      localStorage.removeItem("userRole");
+      localStorage.removeItem("demoMode");
+      navigate("/");
+      toast.success("Signed out successfully");
     } catch (error) {
-      console.error('Sign out error:', error);
+      console.error("Sign out error:", error);
       localStorage.clear();
-      navigate('/');
+      navigate("/");
     }
+  };
+
+  // Placeholder component for unimplemented sections
+  const renderPlaceholder = (
+    title: string,
+    description: string,
+    Icon: React.ElementType,
+  ) => {
+    return (
+      <div className="space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h2 className="text-xl font-semibold text-gray-900">{title}</h2>
+            <p className="text-sm text-gray-600 mt-1">{description}</p>
+          </div>
+        </div>
+        <div className="bg-white border border-gray-200 rounded-xl p-6 text-center">
+          <Icon className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+          <h3 className="text-lg font-semibold text-gray-600">{title}</h3>
+          <p className="text-gray-500">
+            Coming soon - Implementation in progress
+          </p>
+          <button
+            onClick={() => toast.info(`Feature coming soon: ${title}`)}
+            className="mt-4 px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-900 text-sm"
+          >
+            Notify When Ready
+          </button>
+        </div>
+      </div>
+    );
   };
 
   // ============== RENDER SECTIONS ==============
 
   // Dashboard Section
   const renderDashboard = () => {
-    const userName = currentUser?.user_metadata?.full_name || 'Admin';
-    
+    const userName = currentUser?.user_metadata?.full_name || "Admin";
+
     return (
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h2 className="text-xl font-semibold text-gray-900">Dashboard Overview</h2>
+            <h2 className="text-xl font-semibold text-gray-900">
+              Dashboard Overview
+            </h2>
             <p className="text-sm text-gray-600 mt-1">
               Welcome back, {userName}
             </p>
@@ -1378,31 +1876,38 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
             icon={Users}
             color="primary"
             loading={dashboardLoading}
-            onClick={() => handleSectionClick('sellers')}
+            onClick={() => handleSectionClick("sellers")}
           />
           <MetricCard
             title="Active Sellers"
-            value={metrics?.totalSellers || sellerApplications?.filter(app => app.status === 'approved').length || 0}
+            value={
+              metrics?.totalSellers ||
+              (sellerApplications
+                ? sellerApplications.filter(
+                    (app: SellerApplication) => app.status === "approved",
+                  ).length
+                : 0)
+            }
             icon={UserCheck}
             color="success"
             loading={dashboardLoading}
-            onClick={() => handleSectionClick('sellers')}
+            onClick={() => handleSectionClick("sellers")}
           />
           <MetricCard
             title="Total Products"
-            value={metrics?.totalProducts || products?.length || 0}
+            value={metrics?.totalProducts || (products ? products.length : 0)}
             icon={Package}
             color="accent"
             loading={dashboardLoading}
-            onClick={() => handleSectionClick('products')}
+            onClick={() => handleSectionClick("products")}
           />
           <MetricCard
             title="Total Orders"
-            value={metrics?.totalOrders || orders?.length || 0}
+            value={metrics?.totalOrders || (orders ? orders.length : 0)}
             icon={ShoppingBag}
             color="info"
             loading={dashboardLoading}
-            onClick={() => handleSectionClick('orders')}
+            onClick={() => handleSectionClick("orders")}
           />
           <MetricCard
             title="Pending Payments"
@@ -1410,7 +1915,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
             icon={CreditCard}
             color="warning"
             loading={dashboardLoading}
-            onClick={() => handleSectionClick('finance')}
+            onClick={() => handleSectionClick("finance")}
           />
         </div>
 
@@ -1424,27 +1929,45 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
           />
           <MetricCard
             title="Pending Approvals"
-            value={sellerApplications?.filter(app => app.status === 'pending').length || 0}
+            value={
+              sellerApplications
+                ? sellerApplications.filter(
+                    (app: SellerApplication) => app.status === "pending",
+                  ).length
+                : 0
+            }
             icon={AlertCircle}
             color="warning"
             loading={sellersLoading}
-            onClick={() => handleSectionClick('sellers')}
+            onClick={() => handleSectionClick("sellers")}
           />
           <MetricCard
             title="Approved Applications"
-            value={sellerApplications?.filter(app => app.status === 'approved').length || 0}
+            value={
+              sellerApplications
+                ? sellerApplications.filter(
+                    (app: SellerApplication) => app.status === "approved",
+                  ).length
+                : 0
+            }
             icon={CheckCircle}
             color="success"
             loading={sellersLoading}
-            onClick={() => handleSectionClick('sellers')}
+            onClick={() => handleSectionClick("sellers")}
           />
           <MetricCard
             title="Rejected Applications"
-            value={sellerApplications?.filter(app => app.status === 'rejected').length || 0}
+            value={
+              sellerApplications
+                ? sellerApplications.filter(
+                    (app: SellerApplication) => app.status === "rejected",
+                  ).length
+                : 0
+            }
             icon={UserX}
             color="danger"
             loading={sellersLoading}
-            onClick={() => handleSectionClick('sellers')}
+            onClick={() => handleSectionClick("sellers")}
           />
         </div>
 
@@ -1452,36 +1975,44 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="bg-white border border-gray-200 rounded-xl p-4">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-semibold text-gray-900">Recent Orders</h3>
-              <button 
-                onClick={() => handleSectionClick('orders')}
+              <h3 className="text-sm font-semibold text-gray-900">
+                Recent Orders
+              </h3>
+              <button
+                onClick={() => handleSectionClick("orders")}
                 className="text-xs text-gray-600 hover:text-gray-900 font-medium flex items-center gap-1"
               >
                 View All <ChevronRight className="w-3 h-3" />
               </button>
             </div>
             <div className="space-y-3">
-              {recentOrders && recentOrders.length > 0 ? (
-                recentOrders.slice(0, 5).map((order: any) => (
-                  <div key={order.id} className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition-colors">
-                    <div>
-                      <p className="font-medium text-gray-900 text-sm">#{order.order_number || order.id.substring(0, 8)}</p>
-                      <p className="text-xs text-gray-500">
-                        {formatDate(order.created_at)} • {formatCurrency(order.total_amount || 0)}
-                      </p>
+              {recentOrders && recentOrders.length > 0
+                ? recentOrders.slice(0, 5).map((order: any) => (
+                    <div
+                      key={order.id}
+                      className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition-colors"
+                    >
+                      <div>
+                        <p className="font-medium text-gray-900 text-sm">
+                          #{order.order_number || order.id.substring(0, 8)}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          {formatDate(order.created_at)} •{" "}
+                          {formatCurrency(order.total_amount || 0)}
+                        </p>
+                      </div>
+                      <StatusBadge status={order.status || "pending"} />
                     </div>
-                    <StatusBadge status={order.status || 'pending'} />
-                  </div>
-                ))
-              ) : !ordersLoading && (
-                <div className="text-center py-6">
-                  <ShoppingBag className="w-8 h-8 text-gray-300 mx-auto mb-2" />
-                  <p className="text-gray-500 text-sm">No recent orders</p>
-                </div>
-              )}
+                  ))
+                : !ordersLoading && (
+                    <div className="text-center py-6">
+                      <ShoppingBag className="w-8 h-8 text-gray-300 mx-auto mb-2" />
+                      <p className="text-gray-500 text-sm">No recent orders</p>
+                    </div>
+                  )}
               {ordersLoading && (
                 <div className="space-y-3">
-                  {[1, 2, 3].map(i => (
+                  {[1, 2, 3].map((i) => (
                     <div key={i} className="animate-pulse">
                       <div className="h-12 bg-gray-200 rounded-lg"></div>
                     </div>
@@ -1493,40 +2024,48 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
           <div className="bg-white border border-gray-200 rounded-xl p-4">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-semibold text-gray-900">Recent Activity</h3>
-              <button 
-                onClick={() => handleSectionClick('activity')}
+              <h3 className="text-sm font-semibold text-gray-900">
+                Recent Activity
+              </h3>
+              <button
+                onClick={() => handleSectionClick("activity")}
                 className="text-xs text-gray-600 hover:text-gray-900 font-medium flex items-center gap-1"
               >
                 View All <ChevronRight className="w-3 h-3" />
               </button>
             </div>
             <div className="space-y-3">
-              {logs && logs.length > 0 ? (
-                logs.slice(0, 5).map((log: any) => (
-                  <div key={log.id} className="flex items-start space-x-3 p-3 hover:bg-gray-50 rounded-lg transition-colors">
-                    <div className="p-2 bg-gray-100 rounded-lg">
-                      <Activity className="w-4 h-4 text-gray-700" />
+              {logs && logs.length > 0
+                ? logs.slice(0, 5).map((log: any) => (
+                    <div
+                      key={log.id}
+                      className="flex items-start space-x-3 p-3 hover:bg-gray-50 rounded-lg transition-colors"
+                    >
+                      <div className="p-2 bg-gray-100 rounded-lg">
+                        <Activity className="w-4 h-4 text-gray-700" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-gray-900 text-sm capitalize truncate">
+                          {log.action?.replace(/_/g, " ")}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          {log.target_type} • {formatDate(log.created_at)}{" "}
+                          {formatTime(log.created_at)}
+                        </p>
+                      </div>
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-medium text-gray-900 text-sm capitalize truncate">
-                        {log.action?.replace(/_/g, ' ')}
-                      </p>
-                      <p className="text-xs text-gray-500">
-                        {log.target_type} • {formatDate(log.created_at)} {formatTime(log.created_at)}
+                  ))
+                : !logsLoading && (
+                    <div className="text-center py-6">
+                      <Activity className="w-8 h-8 text-gray-300 mx-auto mb-2" />
+                      <p className="text-gray-500 text-sm">
+                        No recent activity
                       </p>
                     </div>
-                  </div>
-                ))
-              ) : !logsLoading && (
-                <div className="text-center py-6">
-                  <Activity className="w-8 h-8 text-gray-300 mx-auto mb-2" />
-                  <p className="text-gray-500 text-sm">No recent activity</p>
-                </div>
-              )}
+                  )}
               {logsLoading && (
                 <div className="space-y-3">
-                  {[1, 2, 3].map(i => (
+                  {[1, 2, 3].map((i) => (
                     <div key={i} className="animate-pulse">
                       <div className="h-12 bg-gray-200 rounded-lg"></div>
                     </div>
@@ -1542,20 +2081,47 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
   // Sellers Section
   const renderSellers = () => {
-    const pendingCount = sellerApplications?.filter(app => app.status === 'pending').length || 0;
-    const approvedCount = sellerApplications?.filter(app => app.status === 'approved').length || 0;
-    const rejectedCount = sellerApplications?.filter(app => app.status === 'rejected').length || 0;
-    
+    const pendingCount = sellerApplications
+      ? sellerApplications.filter(
+          (app: SellerApplication) => app.status === "pending",
+        ).length
+      : 0;
+    const approvedCount = sellerApplications
+      ? sellerApplications.filter(
+          (app: SellerApplication) => app.status === "approved",
+        ).length
+      : 0;
+    const rejectedCount = sellerApplications
+      ? sellerApplications.filter(
+          (app: SellerApplication) => app.status === "rejected",
+        ).length
+      : 0;
+
     return (
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h2 className="text-xl font-semibold text-gray-900">Seller Management</h2>
+            <h2 className="text-xl font-semibold text-gray-900">
+              Seller Management
+            </h2>
             <p className="text-sm text-gray-600 mt-1">
-              <span className="font-semibold">{sellers?.length || 0}</span> active sellers • 
-              <span className="font-semibold text-yellow-600"> {pendingCount}</span> pending • 
-              <span className="font-semibold text-green-600"> {approvedCount}</span> approved • 
-              <span className="font-semibold text-red-600"> {rejectedCount}</span> rejected
+              <span className="font-semibold">{sellers?.length || 0}</span>{" "}
+              active sellers •
+              <span className="font-semibold text-yellow-600">
+                {" "}
+                {pendingCount}
+              </span>{" "}
+              pending •
+              <span className="font-semibold text-green-600">
+                {" "}
+                {approvedCount}
+              </span>{" "}
+              approved •
+              <span className="font-semibold text-red-600">
+                {" "}
+                {rejectedCount}
+              </span>{" "}
+              rejected
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -1582,11 +2148,11 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
         {/* Status Tabs */}
         <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg">
           <button
-            onClick={() => setStatusFilter('all')}
+            onClick={() => setStatusFilter("all")}
             className={`flex-1 py-2 px-4 text-sm font-medium rounded-md transition-colors ${
-              statusFilter === 'all'
-                ? 'bg-white text-gray-900 shadow-sm'
-                : 'text-gray-600 hover:text-gray-900'
+              statusFilter === "all"
+                ? "bg-white text-gray-900 shadow-sm"
+                : "text-gray-600 hover:text-gray-900"
             }`}
           >
             All Applications
@@ -1595,11 +2161,11 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
             </span>
           </button>
           <button
-            onClick={() => setStatusFilter('pending')}
+            onClick={() => setStatusFilter("pending")}
             className={`flex-1 py-2 px-4 text-sm font-medium rounded-md transition-colors ${
-              statusFilter === 'pending'
-                ? 'bg-white text-gray-900 shadow-sm'
-                : 'text-gray-600 hover:text-gray-900'
+              statusFilter === "pending"
+                ? "bg-white text-gray-900 shadow-sm"
+                : "text-gray-600 hover:text-gray-900"
             }`}
           >
             Pending
@@ -1608,11 +2174,11 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
             </span>
           </button>
           <button
-            onClick={() => setStatusFilter('approved')}
+            onClick={() => setStatusFilter("approved")}
             className={`flex-1 py-2 px-4 text-sm font-medium rounded-md transition-colors ${
-              statusFilter === 'approved'
-                ? 'bg-white text-gray-900 shadow-sm'
-                : 'text-gray-600 hover:text-gray-900'
+              statusFilter === "approved"
+                ? "bg-white text-gray-900 shadow-sm"
+                : "text-gray-600 hover:text-gray-900"
             }`}
           >
             Approved
@@ -1621,11 +2187,11 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
             </span>
           </button>
           <button
-            onClick={() => setStatusFilter('rejected')}
+            onClick={() => setStatusFilter("rejected")}
             className={`flex-1 py-2 px-4 text-sm font-medium rounded-md transition-colors ${
-              statusFilter === 'rejected'
-                ? 'bg-white text-gray-900 shadow-sm'
-                : 'text-gray-600 hover:text-gray-900'
+              statusFilter === "rejected"
+                ? "bg-white text-gray-900 shadow-sm"
+                : "text-gray-600 hover:text-gray-900"
             }`}
           >
             Rejected
@@ -1641,10 +2207,19 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-sm font-semibold text-gray-900">
-                  Seller Applications ({statusFilter.charAt(0).toUpperCase() + statusFilter.slice(1)})
+                  Seller Applications (
+                  {statusFilter.charAt(0).toUpperCase() + statusFilter.slice(1)}
+                  )
                 </h3>
                 <p className="text-xs text-gray-600 mt-1">
-                  Showing {sellerApplications?.filter(app => statusFilter === 'all' || app.status === statusFilter).length || 0} applications
+                  Showing{" "}
+                  {sellerApplications
+                    ? sellerApplications.filter(
+                        (app: SellerApplication) =>
+                          statusFilter === "all" || app.status === statusFilter,
+                      ).length
+                    : 0}{" "}
+                  applications
                   {searchQuery && ` for "${searchQuery}"`}
                 </p>
               </div>
@@ -1662,123 +2237,173 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
               </div>
             </div>
           </div>
-          
+
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Application ID</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Business</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Owner</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Status</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Submitted</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Actions</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    Application ID
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    Business
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    Owner
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    Status
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    Submitted
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {sellerApplications && sellerApplications.length > 0 ? (
-                  sellerApplications
-                    .filter(app => statusFilter === 'all' || app.status === statusFilter)
-                    .filter(app =>
-                      !searchQuery ||
-                      app.business_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                      app.full_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                      app.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                      app.application_id?.toLowerCase().includes(searchQuery.toLowerCase())
-                    )
-                    .map((application: SellerApplication) => (
-                    <tr key={application.id} className="hover:bg-gray-50 transition-colors">
-                      <td className="px-4 py-3">
-                        <p className="text-sm font-medium text-gray-900">{application.application_id}</p>
-                      </td>
-                      <td className="px-4 py-3">
-                        <div>
-                          <p className="text-sm font-medium text-gray-900">{application.business_name}</p>
-                          <p className="text-xs text-gray-500">{application.city}</p>
-                        </div>
-                      </td>
-                      <td className="px-4 py-3">
-                        <p className="text-sm text-gray-900">{application.full_name}</p>
-                        <p className="text-xs text-gray-500">{application.email}</p>
-                      </td>
-                      <td className="px-4 py-3">
-                        <StatusBadge status={application.status} />
-                      </td>
-                      <td className="px-4 py-3">
-                        <div className="flex flex-col">
-                          <span className="text-sm text-gray-900">{formatDate(application.submitted_at)}</span>
-                          <span className="text-xs text-gray-500">{formatTime(application.submitted_at)}</span>
-                        </div>
-                      </td>
-                      <td className="px-4 py-3">
-                        <div className="flex items-center gap-2">
-                          <ActionButton
-                            icon={Eye}
-                            label="View"
-                            variant="secondary"
-                            size="sm"
-                            onClick={() => openSellerDetail(application)}
-                          />
-                          {application.status === 'pending' && (
-                            <>
+                {sellerApplications && sellerApplications.length > 0
+                  ? sellerApplications
+                      .filter(
+                        (app: SellerApplication) =>
+                          statusFilter === "all" || app.status === statusFilter,
+                      )
+                      .filter(
+                        (app: SellerApplication) =>
+                          !searchQuery ||
+                          app.business_name
+                            ?.toLowerCase()
+                            .includes(searchQuery.toLowerCase()) ||
+                          app.full_name
+                            ?.toLowerCase()
+                            .includes(searchQuery.toLowerCase()) ||
+                          app.email
+                            ?.toLowerCase()
+                            .includes(searchQuery.toLowerCase()) ||
+                          app.application_id
+                            ?.toLowerCase()
+                            .includes(searchQuery.toLowerCase()),
+                      )
+                      .map((application: SellerApplication) => (
+                        <tr
+                          key={application.id}
+                          className="hover:bg-gray-50 transition-colors"
+                        >
+                          <td className="px-4 py-3">
+                            <p className="text-sm font-medium text-gray-900">
+                              {application.application_id}
+                            </p>
+                          </td>
+                          <td className="px-4 py-3">
+                            <div>
+                              <p className="text-sm font-medium text-gray-900">
+                                {application.business_name}
+                              </p>
+                              <p className="text-xs text-gray-500">
+                                {application.city}
+                              </p>
+                            </div>
+                          </td>
+                          <td className="px-4 py-3">
+                            <p className="text-sm text-gray-900">
+                              {application.full_name}
+                            </p>
+                            <p className="text-xs text-gray-500">
+                              {application.email}
+                            </p>
+                          </td>
+                          <td className="px-4 py-3">
+                            <StatusBadge status={application.status} />
+                          </td>
+                          <td className="px-4 py-3">
+                            <div className="flex flex-col">
+                              <span className="text-sm text-gray-900">
+                                {formatDate(application.submitted_at)}
+                              </span>
+                              <span className="text-xs text-gray-500">
+                                {formatTime(application.submitted_at)}
+                              </span>
+                            </div>
+                          </td>
+                          <td className="px-4 py-3">
+                            <div className="flex items-center gap-2">
                               <ActionButton
-                                icon={UserCheck}
-                                label="Approve"
-                                variant="success"
+                                icon={Eye}
+                                label="View"
+                                variant="secondary"
                                 size="sm"
-                                onClick={() => openApproveModal(application)}
-                                disabled={isProcessing}
+                                onClick={() => openSellerDetail(application)}
                               />
-                              <ActionButton
-                                icon={UserX}
-                                label="Reject"
-                                variant="danger"
-                                size="sm"
-                                onClick={() => openRejectModal(application)}
-                                disabled={isProcessing}
-                              />
-                            </>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  ))
-                ) : !sellersLoading && (
-                  <tr>
-                    <td colSpan={6} className="px-4 py-8 text-center">
-                      <div className="max-w-md mx-auto">
-                        <Users className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                        <p className="text-gray-500 mb-2">No applications found</p>
-                        <p className="text-sm text-gray-400 mb-4">
-                          {searchQuery ? `No results for "${searchQuery}"` : 'No seller applications yet'}
-                        </p>
-                        <div className="flex flex-col gap-2">
-                          <button
-                            onClick={() => {
-                              setStatusFilter('all');
-                              setSearchQuery('');
-                            }}
-                            className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm hover:bg-gray-200"
-                          >
-                            Clear Filters
-                          </button>
-                          <button
-                            onClick={() => refreshSellers()}
-                            className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700"
-                          >
-                            Refresh Data
-                          </button>
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
-                )}
+                              {application.status === "pending" && (
+                                <>
+                                  <ActionButton
+                                    icon={UserCheck}
+                                    label="Approve"
+                                    variant="success"
+                                    size="sm"
+                                    onClick={() =>
+                                      openApproveModal(application)
+                                    }
+                                    disabled={isProcessing}
+                                  />
+                                  <ActionButton
+                                    icon={UserX}
+                                    label="Reject"
+                                    variant="danger"
+                                    size="sm"
+                                    onClick={() => openRejectModal(application)}
+                                    disabled={isProcessing}
+                                  />
+                                </>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                  : !sellersLoading && (
+                      <tr>
+                        <td colSpan={6} className="px-4 py-8 text-center">
+                          <div className="max-w-md mx-auto">
+                            <Users className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                            <p className="text-gray-500 mb-2">
+                              No applications found
+                            </p>
+                            <p className="text-sm text-gray-400 mb-4">
+                              {searchQuery
+                                ? `No results for "${searchQuery}"`
+                                : "No seller applications yet"}
+                            </p>
+                            <div className="flex flex-col gap-2">
+                              <button
+                                onClick={() => {
+                                  setStatusFilter("all");
+                                  setSearchQuery("");
+                                }}
+                                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm hover:bg-gray-200"
+                              >
+                                Clear Filters
+                              </button>
+                              <button
+                                onClick={() => refreshSellers()}
+                                className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700"
+                              >
+                                Refresh Data
+                              </button>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    )}
                 {sellersLoading && (
                   <tr>
                     <td colSpan={6} className="px-4 py-3">
                       <div className="animate-pulse space-y-3">
-                        {[1, 2, 3].map(i => (
-                          <div key={i} className="h-12 bg-gray-200 rounded-lg"></div>
+                        {[1, 2, 3].map((i) => (
+                          <div
+                            key={i}
+                            className="h-12 bg-gray-200 rounded-lg"
+                          ></div>
                         ))}
                       </div>
                     </td>
@@ -1794,8 +2419,12 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
           <div className="p-4 border-b border-gray-200 bg-green-50">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-semibold text-gray-900">Active Sellers</h3>
-                <p className="text-xs text-gray-600 mt-1">{sellers?.length || 0} sellers on platform</p>
+                <h3 className="text-sm font-semibold text-gray-900">
+                  Active Sellers
+                </h3>
+                <p className="text-xs text-gray-600 mt-1">
+                  {sellers?.length || 0} sellers on platform
+                </p>
               </div>
               <span className="px-2.5 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">
                 Active
@@ -1806,89 +2435,145 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
             <table className="w-full">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Business</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Status</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Products</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Orders</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Revenue</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Joined</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Actions</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    Business
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    Status
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    Products
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    Orders
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    Revenue
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    Joined
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {sellers && sellers.length > 0 ? (
-                  sellers
-                    .filter(seller =>
-                      !searchQuery ||
-                      seller.business_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                      seller.full_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                      seller.email?.toLowerCase().includes(searchQuery.toLowerCase())
-                    )
-                    .map((seller: any) => (
-                    <tr key={seller.id} className="hover:bg-gray-50 transition-colors">
-                      <td className="px-4 py-3">
-                        <div>
-                          <p className="text-sm font-medium text-gray-900">{seller.business_name || seller.full_name}</p>
-                          <p className="text-xs text-gray-500">{seller.email}</p>
-                        </div>
-                      </td>
-                      <td className="px-4 py-3">
-                        <StatusBadge status={seller.status || seller.user_type || 'active'} />
-                      </td>
-                      <td className="px-4 py-3">
-                        <p className="text-sm text-gray-900">{seller.total_products || 0}</p>
-                      </td>
-                      <td className="px-4 py-3">
-                        <p className="text-sm text-gray-900">{seller.total_orders || 0}</p>
-                      </td>
-                      <td className="px-4 py-3">
-                        <p className="text-sm font-medium text-gray-900">{formatCurrency(seller.total_sales || 0)}</p>
-                      </td>
-                      <td className="px-4 py-3">
-                        <p className="text-sm text-gray-900">{formatDate(seller.created_at || seller.joined_at)}</p>
-                      </td>
-                      <td className="px-4 py-3">
-                        <div className="flex items-center gap-2">
-                          <ActionButton
-                            icon={Eye}
-                            label="View"
-                            variant="secondary"
-                            size="sm"
-                            onClick={() => window.open(`/seller/${seller.id}`, '_blank')}
-                          />
-                          <ActionButton
-                            icon={UserX}
-                            label="Block"
-                            variant="danger"
-                            size="sm"
-                            onClick={() => {
-                              const application = sellerApplications?.find(app => app.user_id === seller.id);
-                              if (application) {
-                                openRejectModal(application);
-                              } else {
-                                toast.error('Application not found for this seller');
+                {sellers && sellers.length > 0
+                  ? sellers
+                      .filter(
+                        (seller: any) =>
+                          !searchQuery ||
+                          seller.business_name
+                            ?.toLowerCase()
+                            .includes(searchQuery.toLowerCase()) ||
+                          seller.name
+                            ?.toLowerCase()
+                            .includes(searchQuery.toLowerCase()) ||
+                          seller.email
+                            ?.toLowerCase()
+                            .includes(searchQuery.toLowerCase()),
+                      )
+                      .map((seller: any) => (
+                        <tr
+                          key={seller.id}
+                          className="hover:bg-gray-50 transition-colors"
+                        >
+                          <td className="px-4 py-3">
+                            <div>
+                              <p className="text-sm font-medium text-gray-900">
+                                {seller.business_name ||
+                                  seller.name ||
+                                  seller.email}
+                              </p>
+                              <p className="text-xs text-gray-500">
+                                {seller.email}
+                              </p>
+                            </div>
+                          </td>
+                          <td className="px-4 py-3">
+                            <StatusBadge
+                              status={
+                                seller.status || seller.user_type || "active"
                               }
-                            }}
-                            disabled={isProcessing}
-                          />
-                        </div>
-                      </td>
-                    </tr>
-                  ))
-                ) : !sellersLoading && (
-                  <tr>
-                    <td colSpan={7} className="px-4 py-8 text-center">
-                      <Users className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                      <p className="text-gray-500">No active sellers found</p>
-                    </td>
-                  </tr>
-                )}
+                            />
+                          </td>
+                          <td className="px-4 py-3">
+                            <p className="text-sm text-gray-900">
+                              {seller.total_products || 0}
+                            </p>
+                          </td>
+                          <td className="px-4 py-3">
+                            <p className="text-sm text-gray-900">
+                              {seller.total_orders || 0}
+                            </p>
+                          </td>
+                          <td className="px-4 py-3">
+                            <p className="text-sm font-medium text-gray-900">
+                              {formatCurrency(seller.total_sales || 0)}
+                            </p>
+                          </td>
+                          <td className="px-4 py-3">
+                            <p className="text-sm text-gray-900">
+                              {formatDate(
+                                seller.created_at || seller.joined_at,
+                              )}
+                            </p>
+                          </td>
+                          <td className="px-4 py-3">
+                            <div className="flex items-center gap-2">
+                              <ActionButton
+                                icon={Eye}
+                                label="View"
+                                variant="secondary"
+                                size="sm"
+                                onClick={() =>
+                                  window.open(`/seller/${seller.id}`, "_blank")
+                                }
+                              />
+                              <ActionButton
+                                icon={UserX}
+                                label="Block"
+                                variant="danger"
+                                size="sm"
+                                onClick={() => {
+                                  const application = sellerApplications?.find(
+                                    (app: SellerApplication) =>
+                                      app.user_id === seller.id,
+                                  );
+                                  if (application) {
+                                    openRejectModal(application);
+                                  } else {
+                                    toast.error(
+                                      "Application not found for this seller",
+                                    );
+                                  }
+                                }}
+                                disabled={isProcessing}
+                              />
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                  : !sellersLoading && (
+                      <tr>
+                        <td colSpan={7} className="px-4 py-8 text-center">
+                          <Users className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                          <p className="text-gray-500">
+                            No active sellers found
+                          </p>
+                        </td>
+                      </tr>
+                    )}
                 {sellersLoading && (
                   <tr>
                     <td colSpan={7} className="px-4 py-3">
                       <div className="animate-pulse space-y-3">
-                        {[1, 2, 3].map(i => (
-                          <div key={i} className="h-12 bg-gray-200 rounded-lg"></div>
+                        {[1, 2, 3].map((i) => (
+                          <div
+                            key={i}
+                            className="h-12 bg-gray-200 rounded-lg"
+                          ></div>
                         ))}
                       </div>
                     </td>
@@ -1904,20 +2589,41 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
   // Products Section
   const renderProducts = () => {
-    const productsWithWarnings = products?.filter(p => (p.warning_count || 0) > 0) || [];
-    const suspendedProducts = products?.filter(p => p.is_suspended_by_admin || p.status === 'suspended') || [];
-    const outOfStockProducts = products?.filter(p => p.stock_quantity === 0) || [];
-    
+    const productsWithWarnings =
+      products?.filter((p: Product) => (p.warning_count || 0) > 0) || [];
+    const suspendedProducts =
+      products?.filter(
+        (p: Product) => p.is_suspended_by_admin || p.status === "suspended",
+      ) || [];
+    const outOfStockProducts =
+      products?.filter((p: Product) => p.stock_quantity === 0) || [];
+
     return (
       <div className="space-y-6">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h2 className="text-xl font-semibold text-gray-900">Product Management</h2>
+            <h2 className="text-xl font-semibold text-gray-900">
+              Product Management
+            </h2>
             <p className="text-sm text-gray-600 mt-1">
-              <span className="font-semibold">{products?.length || 0}</span> total products • 
-              <span className="font-semibold text-green-600"> {products?.filter(p => p.status === 'active').length || 0}</span> active • 
-              <span className="font-semibold text-red-600"> {suspendedProducts.length}</span> suspended • 
-              <span className="font-semibold text-yellow-600"> {productsWithWarnings.length}</span> with warnings
+              <span className="font-semibold">{products?.length || 0}</span>{" "}
+              total products •
+              <span className="font-semibold text-green-600">
+                {" "}
+                {products?.filter((p: Product) => p.status === "active")
+                  .length || 0}
+              </span>{" "}
+              active •
+              <span className="font-semibold text-red-600">
+                {" "}
+                {suspendedProducts.length}
+              </span>{" "}
+              suspended •
+              <span className="font-semibold text-yellow-600">
+                {" "}
+                {productsWithWarnings.length}
+              </span>{" "}
+              with warnings
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -1927,7 +2633,12 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 type="text"
                 placeholder="Search products..."
                 value={productFilters.search}
-                onChange={(e) => setProductFilters({ ...productFilters, search: e.target.value })}
+                onChange={(e) =>
+                  setProductFilters({
+                    ...productFilters,
+                    search: e.target.value,
+                  })
+                }
                 className="pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
               />
             </div>
@@ -1940,15 +2651,15 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
             />
             <div className="flex border border-gray-300 rounded-lg overflow-hidden">
               <button
-                onClick={() => setViewMode('list')}
-                className={`p-2 ${viewMode === 'list' ? 'bg-gray-100' : 'hover:bg-gray-50'}`}
+                onClick={() => setViewMode("list")}
+                className={`p-2 ${viewMode === "list" ? "bg-gray-100" : "hover:bg-gray-50"}`}
                 title="List View"
               >
                 <List className="w-4 h-4" />
               </button>
               <button
-                onClick={() => setViewMode('grid')}
-                className={`p-2 ${viewMode === 'grid' ? 'bg-gray-100' : 'hover:bg-gray-50'}`}
+                onClick={() => setViewMode("grid")}
+                className={`p-2 ${viewMode === "grid" ? "bg-gray-100" : "hover:bg-gray-50"}`}
                 title="Grid View"
               >
                 <Grid className="w-4 h-4" />
@@ -1965,7 +2676,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 <CheckCircle className="w-4 h-4 text-green-600" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-gray-900">{products?.filter(p => p.status === 'active').length || 0}</p>
+                <p className="text-sm font-semibold text-gray-900">
+                  {products?.filter((p: Product) => p.status === "active")
+                    .length || 0}
+                </p>
                 <p className="text-xs text-gray-600">Active Products</p>
               </div>
             </div>
@@ -1976,7 +2690,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 <AlertTriangle className="w-4 h-4 text-yellow-600" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-gray-900">{productsWithWarnings.length}</p>
+                <p className="text-sm font-semibold text-gray-900">
+                  {productsWithWarnings.length}
+                </p>
                 <p className="text-xs text-gray-600">With Warnings</p>
               </div>
             </div>
@@ -1987,7 +2703,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 <AlertCircle className="w-4 h-4 text-red-600" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-gray-900">{outOfStockProducts.length}</p>
+                <p className="text-sm font-semibold text-gray-900">
+                  {outOfStockProducts.length}
+                </p>
                 <p className="text-xs text-gray-600">Out of Stock</p>
               </div>
             </div>
@@ -1999,7 +2717,12 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
               </div>
               <div>
                 <p className="text-sm font-semibold text-gray-900">
-                  {formatCurrency(products?.reduce((sum, p) => sum + (p.revenue || 0), 0) || 0)}
+                  {formatCurrency(
+                    products?.reduce(
+                      (sum: number, p: Product) => sum + (p.revenue || 0),
+                      0,
+                    ) || 0,
+                  )}
                 </p>
                 <p className="text-xs text-gray-600">Total Revenue</p>
               </div>
@@ -2013,7 +2736,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
               <div className="flex items-center gap-2">
                 <span className="font-medium text-blue-700">
-                  {selectedProducts.length} product{selectedProducts.length > 1 ? 's' : ''} selected
+                  {selectedProducts.length} product
+                  {selectedProducts.length > 1 ? "s" : ""} selected
                 </span>
               </div>
               <div className="flex flex-wrap gap-2">
@@ -2033,7 +2757,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   disabled={!bulkAction || isProcessing}
                   className="px-4 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium text-sm disabled:opacity-50"
                 >
-                  {isProcessing ? 'Processing...' : 'Apply'}
+                  {isProcessing ? "Processing..." : "Apply"}
                 </button>
                 <button
                   onClick={() => setSelectedProducts([])}
@@ -2050,10 +2774,17 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
         <div className="bg-white border border-gray-200 rounded-lg p-4">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">Status</label>
+              <label className="block text-xs font-medium text-gray-700 mb-1">
+                Status
+              </label>
               <select
                 value={productFilters.status}
-                onChange={(e) => setProductFilters({ ...productFilters, status: e.target.value })}
+                onChange={(e) =>
+                  setProductFilters({
+                    ...productFilters,
+                    status: e.target.value,
+                  })
+                }
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
               >
                 <option value="">All Status</option>
@@ -2066,10 +2797,17 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
               </select>
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">Category Type</label>
+              <label className="block text-xs font-medium text-gray-700 mb-1">
+                Category Type
+              </label>
               <select
                 value={productFilters.categoryType}
-                onChange={(e) => setProductFilters({ ...productFilters, categoryType: e.target.value })}
+                onChange={(e) =>
+                  setProductFilters({
+                    ...productFilters,
+                    categoryType: e.target.value,
+                  })
+                }
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
               >
                 <option value="">All Types</option>
@@ -2078,10 +2816,17 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
               </select>
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">Stock Status</label>
+              <label className="block text-xs font-medium text-gray-700 mb-1">
+                Stock Status
+              </label>
               <select
                 value={productFilters.stockStatus}
-                onChange={(e) => setProductFilters({ ...productFilters, stockStatus: e.target.value })}
+                onChange={(e) =>
+                  setProductFilters({
+                    ...productFilters,
+                    stockStatus: e.target.value,
+                  })
+                }
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
               >
                 <option value="">All Stock</option>
@@ -2091,16 +2836,24 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
               </select>
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">Seller</label>
+              <label className="block text-xs font-medium text-gray-700 mb-1">
+                Seller
+              </label>
               <select
                 value={productFilters.sellerId}
-                onChange={(e) => setProductFilters({ ...productFilters, sellerId: e.target.value })}
+                onChange={(e) =>
+                  setProductFilters({
+                    ...productFilters,
+                    sellerId: e.target.value,
+                  })
+                }
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
               >
                 <option value="">All Sellers</option>
-                {sellers?.map(seller => (
+                {sellers?.map((seller: any) => (
                   <option key={seller.id} value={seller.id}>
-                    {seller.business_name} ({seller.total_products || 0})
+                    {seller.business_name || seller.name || seller.email} (
+                    {seller.total_products || 0})
                   </option>
                 ))}
               </select>
@@ -2112,34 +2865,50 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 type="checkbox"
                 id="hasWarnings"
                 checked={productFilters.hasWarnings === true}
-                onChange={(e) => setProductFilters({ ...productFilters, hasWarnings: e.target.checked ? true : null })}
+                onChange={(e) =>
+                  setProductFilters({
+                    ...productFilters,
+                    hasWarnings: e.target.checked ? true : null,
+                  })
+                }
                 className="rounded text-blue-500"
               />
-              <label htmlFor="hasWarnings" className="text-sm text-gray-700">Has Warnings</label>
+              <label htmlFor="hasWarnings" className="text-sm text-gray-700">
+                Has Warnings
+              </label>
             </div>
             <div className="flex items-center gap-2">
               <input
                 type="checkbox"
                 id="isSuspended"
                 checked={productFilters.isSuspended === true}
-                onChange={(e) => setProductFilters({ ...productFilters, isSuspended: e.target.checked ? true : null })}
+                onChange={(e) =>
+                  setProductFilters({
+                    ...productFilters,
+                    isSuspended: e.target.checked ? true : null,
+                  })
+                }
                 className="rounded text-blue-500"
               />
-              <label htmlFor="isSuspended" className="text-sm text-gray-700">Suspended Only</label>
+              <label htmlFor="isSuspended" className="text-sm text-gray-700">
+                Suspended Only
+              </label>
             </div>
             <div className="flex justify-end">
               <button
-                onClick={() => setProductFilters({
-                  search: '',
-                  status: '',
-                  categoryType: '',
-                  usageType: '',
-                  stockStatus: '',
-                  sellerId: '',
-                  minRating: 0,
-                  hasWarnings: null,
-                  isSuspended: null
-                })}
+                onClick={() =>
+                  setProductFilters({
+                    search: "",
+                    status: "",
+                    categoryType: "",
+                    usageType: "",
+                    stockStatus: "",
+                    sellerId: "",
+                    minRating: 0,
+                    hasWarnings: null,
+                    isSuspended: null,
+                  })
+                }
                 className="px-3 py-1.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 text-sm"
               >
                 Clear Filters
@@ -2153,18 +2922,22 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
           <div className="px-4 py-3 border-b border-gray-200 bg-gray-50">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-semibold text-gray-900">All Products</h3>
+                <h3 className="text-sm font-semibold text-gray-900">
+                  All Products
+                </h3>
                 <p className="text-xs text-gray-600 mt-0.5">
-                  Showing {filteredProducts?.length || 0} products
+                  Showing {filteredProducts.length} products
                   {productFilters.search && ` for "${productFilters.search}"`}
                 </p>
               </div>
               <div className="text-xs text-gray-600">
-                {products?.filter(p => p.status === 'active').length || 0} active • {suspendedProducts.length} suspended
+                {products?.filter((p: Product) => p.status === "active")
+                  .length || 0}{" "}
+                active • {suspendedProducts.length} suspended
               </div>
             </div>
           </div>
-          
+
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead className="bg-gray-50">
@@ -2172,204 +2945,257 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   <th className="py-2.5 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-8">
                     <input
                       type="checkbox"
-                      checked={selectedProducts.length === filteredProducts?.length && filteredProducts?.length > 0}
-                      onChange={(e) => handleSelectAllProducts(e.target.checked)}
+                      checked={
+                        selectedProducts.length === filteredProducts.length &&
+                        filteredProducts.length > 0
+                      }
+                      onChange={(e) =>
+                        handleSelectAllProducts(e.target.checked)
+                      }
                       className="rounded text-blue-500"
                     />
                   </th>
-                  <th className="py-2.5 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
-                  <th className="py-2.5 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Seller</th>
-                  <th className="py-2.5 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
-                  <th className="py-2.5 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stock</th>
-                  <th className="py-2.5 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                  <th className="py-2.5 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Metrics</th>
-                  <th className="py-2.5 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                  <th className="py-2.5 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Product
+                  </th>
+                  <th className="py-2.5 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Seller
+                  </th>
+                  <th className="py-2.5 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Price
+                  </th>
+                  <th className="py-2.5 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Stock
+                  </th>
+                  <th className="py-2.5 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Status
+                  </th>
+                  <th className="py-2.5 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Metrics
+                  </th>
+                  <th className="py-2.5 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {filteredProducts && filteredProducts.length > 0 ? (
-                  filteredProducts.map((product) => (
-                    <tr key={product.id} className="hover:bg-gray-50 transition">
-                      <td className="py-3 px-4">
-                        <input
-                          type="checkbox"
-                          checked={selectedProducts.includes(product.id)}
-                          onChange={() => toggleProductSelection(product.id)}
-                          className="rounded text-blue-500"
-                        />
-                      </td>
-                      <td className="py-3 px-4">
-                        <div className="flex items-center gap-2">
-                          <div className="w-10 h-10 bg-gray-200 rounded-lg overflow-hidden flex-shrink-0">
-                            {product.images?.[0] ? (
-                              <img
-                                src={product.images[0]}
-                                alt={product.name}
-                                className="w-full h-full object-cover"
-                              />
-                            ) : (
-                              <Package className="w-5 h-5 text-gray-400 m-auto" />
+                {filteredProducts.length > 0
+                  ? filteredProducts.map((product: Product) => (
+                      <tr
+                        key={product.id}
+                        className="hover:bg-gray-50 transition"
+                      >
+                        <td className="py-3 px-4">
+                          <input
+                            type="checkbox"
+                            checked={selectedProducts.includes(product.id)}
+                            onChange={() => toggleProductSelection(product.id)}
+                            className="rounded text-blue-500"
+                          />
+                        </td>
+                        <td className="py-3 px-4">
+                          <div className="flex items-center gap-2">
+                            <div className="w-10 h-10 bg-gray-200 rounded-lg overflow-hidden flex-shrink-0">
+                              {product.images?.[0] ? (
+                                <img
+                                  src={product.images[0]}
+                                  alt={product.name}
+                                  className="w-full h-full object-cover"
+                                />
+                              ) : (
+                                <Package className="w-5 h-5 text-gray-400 m-auto" />
+                              )}
+                            </div>
+                            <div>
+                              <div className="flex items-center gap-1.5">
+                                <p className="font-medium text-gray-900 text-sm truncate max-w-xs">
+                                  {product.name}
+                                </p>
+                                {product.is_featured && (
+                                  <span className="px-1 py-0.5 bg-blue-100 text-blue-800 rounded text-xs font-medium">
+                                    Featured
+                                  </span>
+                                )}
+                                {product.is_best_seller && (
+                                  <span className="px-1 py-0.5 bg-yellow-100 text-yellow-800 rounded text-xs font-medium">
+                                    Best Seller
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-gray-500 text-xs mt-0.5">
+                                {product.sku && `SKU: ${product.sku} • `}
+                                {product.category_type} • {product.usage_type}
+                              </p>
+                              {getWarningBadge(product.warning_count)}
+                            </div>
+                          </div>
+                        </td>
+                        <td className="py-3 px-4">
+                          <div>
+                            <p className="font-medium text-gray-900 text-sm">
+                              {product.seller_business ||
+                                product.seller_name ||
+                                "Unknown Seller"}
+                            </p>
+                            <p className="text-gray-500 text-xs truncate max-w-xs">
+                              {sellers?.find(
+                                (s: any) => s.id === product.seller_id,
+                              )?.email || "No email"}
+                            </p>
+                          </div>
+                        </td>
+                        <td className="py-3 px-4">
+                          <div>
+                            <p className="font-bold text-gray-900 text-sm">
+                              {formatCurrency(product.price)}
+                            </p>
+                            {product.discounted_price && (
+                              <p className="text-gray-500 text-xs line-through">
+                                {formatCurrency(product.discounted_price)}
+                              </p>
                             )}
                           </div>
-                          <div>
-                            <div className="flex items-center gap-1.5">
-                              <p className="font-medium text-gray-900 text-sm truncate max-w-xs">{product.name}</p>
-                              {product.is_featured && (
-                                <span className="px-1 py-0.5 bg-blue-100 text-blue-800 rounded text-xs font-medium">
-                                  Featured
-                                </span>
-                              )}
-                              {product.is_best_seller && (
-                                <span className="px-1 py-0.5 bg-yellow-100 text-yellow-800 rounded text-xs font-medium">
-                                  Best Seller
-                                </span>
-                              )}
-                            </div>
-                            <p className="text-gray-500 text-xs mt-0.5">
-                              {product.sku && `SKU: ${product.sku} • `}
-                              {product.category_type} • {product.usage_type}
-                            </p>
-                            {getWarningBadge(product.warning_count)}
-                          </div>
-                        </div>
-                      </td>
-                      <td className="py-3 px-4">
-                        <div>
-                          <p className="font-medium text-gray-900 text-sm">{product.seller_business || product.seller_name || 'Unknown Seller'}</p>
-                          <p className="text-gray-500 text-xs truncate max-w-xs">
-                            {sellers?.find(s => s.id === product.seller_id)?.email || 'No email'}
-                          </p>
-                        </div>
-                      </td>
-                      <td className="py-3 px-4">
-                        <div>
-                          <p className="font-bold text-gray-900 text-sm">{formatCurrency(product.price)}</p>
-                          {product.discounted_price && (
-                            <p className="text-gray-500 text-xs line-through">
-                              {formatCurrency(product.discounted_price)}
-                            </p>
+                        </td>
+                        <td className="py-3 px-4">
+                          {getStockBadge(
+                            product.stock_quantity,
+                            product.min_stock_level,
                           )}
-                        </div>
-                      </td>
-                      <td className="py-3 px-4">
-                        {getStockBadge(product.stock_quantity, product.min_stock_level)}
-                      </td>
-                      <td className="py-3 px-4">
-                        {getProductStatusBadge(product)}
-                      </td>
-                      <td className="py-3 px-4">
-                        <div className="space-y-1">
-                          <div className="flex items-center gap-2">
-                            <Star className="w-3 h-3 text-yellow-500" />
-                            <span className="text-xs text-gray-900">{product.rating?.toFixed(1) || '0.0'}</span>
-                            <span className="text-xs text-gray-500">({product.review_count || 0})</span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <ShoppingBag className="w-3 h-3 text-green-500" />
-                            <span className="text-xs text-gray-900">{product.orders_count || 0} orders</span>
-                          </div>
-                          {product.revenue && product.revenue > 0 && (
+                        </td>
+                        <td className="py-3 px-4">
+                          {getProductStatusBadge(product)}
+                        </td>
+                        <td className="py-3 px-4">
+                          <div className="space-y-1">
                             <div className="flex items-center gap-2">
-                              <DollarSign className="w-3 h-3 text-green-500" />
-                              <span className="text-xs text-gray-900">{formatCurrency(product.revenue)}</span>
+                              <Star className="w-3 h-3 text-yellow-500" />
+                              <span className="text-xs text-gray-900">
+                                {product.rating?.toFixed(1) || "0.0"}
+                              </span>
+                              <span className="text-xs text-gray-500">
+                                ({product.review_count || 0})
+                              </span>
                             </div>
-                          )}
-                        </div>
-                      </td>
-                      <td className="py-3 px-4">
-                        <div className="flex items-center gap-1">
-                          <button
-                            onClick={() => handleViewProduct(product)}
-                            className="p-1 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition"
-                            title="View"
-                          >
-                            <Eye className="w-3.5 h-3.5" />
-                          </button>
-                          <button
-                            onClick={() => handleEditProduct(product)}
-                            className="p-1 text-blue-500 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition"
-                            title="Edit"
-                          >
-                            <Edit className="w-3.5 h-3.5" />
-                          </button>
-                          {product.is_suspended_by_admin || product.status === 'suspended' ? (
+                            <div className="flex items-center gap-2">
+                              <ShoppingBag className="w-3 h-3 text-green-500" />
+                              <span className="text-xs text-gray-900">
+                                {product.orders_count || 0} orders
+                              </span>
+                            </div>
+                            {product.revenue && product.revenue > 0 && (
+                              <div className="flex items-center gap-2">
+                                <DollarSign className="w-3 h-3 text-green-500" />
+                                <span className="text-xs text-gray-900">
+                                  {formatCurrency(product.revenue)}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                        </td>
+                        <td className="py-3 px-4">
+                          <div className="flex items-center gap-1">
                             <button
-                              onClick={() => openActivationModal(product)}
-                              className="p-1 text-green-500 hover:text-green-700 hover:bg-green-50 rounded-lg transition"
-                              title="Activate"
+                              onClick={() => handleViewProduct(product)}
+                              className="p-1 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition"
+                              title="View"
                             >
-                              <CheckCircle className="w-3.5 h-3.5" />
+                              <Eye className="w-3.5 h-3.5" />
                             </button>
-                          ) : (
                             <button
-                              onClick={() => openSuspensionModal(product)}
+                              onClick={() => handleEditProduct(product)}
+                              className="p-1 text-blue-500 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition"
+                              title="Edit"
+                            >
+                              <Edit className="w-3.5 h-3.5" />
+                            </button>
+                            {product.is_suspended_by_admin ||
+                            product.status === "suspended" ? (
+                              <button
+                                onClick={() => openActivationModal(product)}
+                                className="p-1 text-green-500 hover:text-green-700 hover:bg-green-50 rounded-lg transition"
+                                title="Activate"
+                              >
+                                <CheckCircle className="w-3.5 h-3.5" />
+                              </button>
+                            ) : (
+                              <button
+                                onClick={() => openSuspensionModal(product)}
+                                className="p-1 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition"
+                                title="Suspend"
+                              >
+                                <AlertTriangle className="w-3.5 h-3.5" />
+                              </button>
+                            )}
+                            <button
+                              onClick={() => openWarningModal(product)}
+                              className="p-1 text-orange-500 hover:text-orange-700 hover:bg-orange-50 rounded-lg transition"
+                              title="Issue Warning"
+                            >
+                              <AlertCircle className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              onClick={() => openDeleteModal(product)}
                               className="p-1 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition"
-                              title="Suspend"
+                              title="Delete"
                             >
-                              <AlertTriangle className="w-3.5 h-3.5" />
+                              <Trash2 className="w-3.5 h-3.5" />
                             </button>
-                          )}
-                          <button
-                            onClick={() => openWarningModal(product)}
-                            className="p-1 text-orange-500 hover:text-orange-700 hover:bg-orange-50 rounded-lg transition"
-                            title="Issue Warning"
-                          >
-                            <AlertCircle className="w-3.5 h-3.5" />
-                          </button>
-                          <button
-                            onClick={() => openDeleteModal(product)}
-                            className="p-1 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition"
-                            title="Delete"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))
-                ) : !productsLoading && (
-                  <tr>
-                    <td colSpan={8} className="px-4 py-8 text-center">
-                      <div className="max-w-md mx-auto">
-                        <Package className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                        <p className="text-gray-500 mb-2">No products found</p>
-                        <p className="text-sm text-gray-400 mb-4">
-                          {productFilters.search ? `No results for "${productFilters.search}"` : 'No products available yet'}
-                        </p>
-                        <div className="flex flex-col gap-2">
-                          <button
-                            onClick={() => setProductFilters({
-                              search: '',
-                              status: '',
-                              categoryType: '',
-                              usageType: '',
-                              stockStatus: '',
-                              sellerId: '',
-                              minRating: 0,
-                              hasWarnings: null,
-                              isSuspended: null
-                            })}
-                            className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm hover:bg-gray-200"
-                          >
-                            Clear Filters
-                          </button>
-                          <button
-                            onClick={() => refreshProducts()}
-                            className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700"
-                          >
-                            Refresh Data
-                          </button>
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
-                )}
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  : !productsLoading && (
+                      <tr>
+                        <td colSpan={8} className="px-4 py-8 text-center">
+                          <div className="max-w-md mx-auto">
+                            <Package className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                            <p className="text-gray-500 mb-2">
+                              No products found
+                            </p>
+                            <p className="text-sm text-gray-400 mb-4">
+                              {productFilters.search
+                                ? `No results for "${productFilters.search}"`
+                                : "No products available yet"}
+                            </p>
+                            <div className="flex flex-col gap-2">
+                              <button
+                                onClick={() =>
+                                  setProductFilters({
+                                    search: "",
+                                    status: "",
+                                    categoryType: "",
+                                    usageType: "",
+                                    stockStatus: "",
+                                    sellerId: "",
+                                    minRating: 0,
+                                    hasWarnings: null,
+                                    isSuspended: null,
+                                  })
+                                }
+                                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm hover:bg-gray-200"
+                              >
+                                Clear Filters
+                              </button>
+                              <button
+                                onClick={() => refreshProducts()}
+                                className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700"
+                              >
+                                Refresh Data
+                              </button>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    )}
                 {productsLoading && (
                   <tr>
                     <td colSpan={8} className="px-4 py-3">
                       <div className="animate-pulse space-y-3">
-                        {[1, 2, 3, 4, 5].map(i => (
-                          <div key={i} className="h-12 bg-gray-200 rounded-lg"></div>
+                        {[1, 2, 3, 4, 5].map((i) => (
+                          <div
+                            key={i}
+                            className="h-12 bg-gray-200 rounded-lg"
+                          ></div>
                         ))}
                       </div>
                     </td>
@@ -2389,9 +3215,12 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h2 className="text-xl font-semibold text-gray-900">Order Management</h2>
+            <h2 className="text-xl font-semibold text-gray-900">
+              Order Management
+            </h2>
             <p className="text-sm text-gray-600 mt-1">
-              {orders?.length || 0} total orders • {recentOrders?.length || 0} recent orders
+              {orders?.length || 0} total orders • {recentOrders?.length || 0}{" "}
+              recent orders
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -2413,61 +3242,95 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
             <table className="w-full">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Order #</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Customer</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Date</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Amount</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Status</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Actions</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    Order #
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    Customer
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    Date
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    Amount
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    Status
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {orders && orders.length > 0 ? (
-                  orders.map((order: any) => (
-                    <tr key={order.id} className="hover:bg-gray-50 transition-colors">
-                      <td className="px-4 py-3">
-                        <p className="text-sm font-medium text-gray-900">#{order.order_number || order.id.substring(0, 8)}</p>
-                      </td>
-                      <td className="px-4 py-3">
-                        <p className="text-sm text-gray-900">{order.customer_name || order.profiles?.full_name || 'Unknown Customer'}</p>
-                        <p className="text-xs text-gray-500">{order.customer_email || order.profiles?.email || 'No email'}</p>
-                      </td>
-                      <td className="px-4 py-3">
-                        <p className="text-sm text-gray-900">{formatDate(order.created_at)}</p>
-                      </td>
-                      <td className="px-4 py-3">
-                        <p className="text-sm font-medium text-gray-900">{formatCurrency(order.total_amount || 0)}</p>
-                      </td>
-                      <td className="px-4 py-3">
-                        <StatusBadge status={order.status || 'pending'} />
-                      </td>
-                      <td className="px-4 py-3">
-                        <div className="flex items-center gap-2">
-                          <ActionButton
-                            icon={Eye}
-                            label="View"
-                            variant="secondary"
-                            size="sm"
-                            onClick={() => window.open(`/order/${order.id}`, '_blank')}
-                          />
-                        </div>
-                      </td>
-                    </tr>
-                  ))
-                ) : !ordersLoading && (
-                  <tr>
-                    <td colSpan={6} className="px-4 py-8 text-center">
-                      <ShoppingBag className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                      <p className="text-gray-500">No orders found</p>
-                    </td>
-                  </tr>
-                )}
+                {orders && orders.length > 0
+                  ? orders.map((order: any) => (
+                      <tr
+                        key={order.id}
+                        className="hover:bg-gray-50 transition-colors"
+                      >
+                        <td className="px-4 py-3">
+                          <p className="text-sm font-medium text-gray-900">
+                            #{order.order_number || order.id.substring(0, 8)}
+                          </p>
+                        </td>
+                        <td className="px-4 py-3">
+                          <p className="text-sm text-gray-900">
+                            {order.customer_name ||
+                              order.profiles?.full_name ||
+                              "Unknown Customer"}
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            {order.customer_email ||
+                              order.profiles?.email ||
+                              "No email"}
+                          </p>
+                        </td>
+                        <td className="px-4 py-3">
+                          <p className="text-sm text-gray-900">
+                            {formatDate(order.created_at)}
+                          </p>
+                        </td>
+                        <td className="px-4 py-3">
+                          <p className="text-sm font-medium text-gray-900">
+                            {formatCurrency(order.total_amount || 0)}
+                          </p>
+                        </td>
+                        <td className="px-4 py-3">
+                          <StatusBadge status={order.status || "pending"} />
+                        </td>
+                        <td className="px-4 py-3">
+                          <div className="flex items-center gap-2">
+                            <ActionButton
+                              icon={Eye}
+                              label="View"
+                              variant="secondary"
+                              size="sm"
+                              onClick={() =>
+                                window.open(`/order/${order.id}`, "_blank")
+                              }
+                            />
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  : !ordersLoading && (
+                      <tr>
+                        <td colSpan={6} className="px-4 py-8 text-center">
+                          <ShoppingBag className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                          <p className="text-gray-500">No orders found</p>
+                        </td>
+                      </tr>
+                    )}
                 {ordersLoading && (
                   <tr>
                     <td colSpan={6} className="px-4 py-3">
                       <div className="animate-pulse space-y-3">
-                        {[1, 2, 3].map(i => (
-                          <div key={i} className="h-12 bg-gray-200 rounded-lg"></div>
+                        {[1, 2, 3].map((i) => (
+                          <div
+                            key={i}
+                            className="h-12 bg-gray-200 rounded-lg"
+                          ></div>
                         ))}
                       </div>
                     </td>
@@ -2487,9 +3350,12 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h2 className="text-xl font-semibold text-gray-900">Reviews Management</h2>
+            <h2 className="text-xl font-semibold text-gray-900">
+              Reviews Management
+            </h2>
             <p className="text-sm text-gray-600 mt-1">
-              {reviews?.length || 0} total reviews • Manage and moderate customer reviews
+              {reviews?.length || 0} total reviews • Manage and moderate
+              customer reviews
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -2506,7 +3372,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
         <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
           <div className="p-4 border-b border-gray-200">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-semibold text-gray-900">All Reviews</h3>
+              <h3 className="text-sm font-semibold text-gray-900">
+                All Reviews
+              </h3>
               <div className="flex items-center gap-2">
                 <select className="border border-gray-300 rounded-lg px-3 py-1.5 text-sm">
                   <option value="all">All Reviews</option>
@@ -2517,11 +3385,11 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
               </div>
             </div>
           </div>
-          
+
           <div className="p-4">
             {reviewsLoading ? (
               <div className="space-y-4">
-                {[1, 2, 3].map(i => (
+                {[1, 2, 3].map((i) => (
                   <div key={i} className="animate-pulse">
                     <div className="h-24 bg-gray-200 rounded-lg"></div>
                   </div>
@@ -2530,24 +3398,33 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
             ) : reviews && reviews.length > 0 ? (
               <div className="space-y-4">
                 {reviews.map((review: any) => (
-                  <div key={review.id} className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50">
+                  <div
+                    key={review.id}
+                    className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50"
+                  >
                     <div className="flex items-start justify-between mb-2">
                       <div>
-                        <p className="font-medium text-gray-900">{review.customer_name || 'Anonymous'}</p>
+                        <p className="font-medium text-gray-900">
+                          {review.customer_name || "Anonymous"}
+                        </p>
                         <div className="flex items-center gap-1 mt-1">
                           {[...Array(5)].map((_, i) => (
-                            <Star 
-                              key={i} 
-                              className={`w-4 h-4 ${i < review.rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`}
+                            <Star
+                              key={i}
+                              className={`w-4 h-4 ${i < review.rating ? "text-yellow-400 fill-yellow-400" : "text-gray-300"}`}
                             />
                           ))}
                         </div>
                       </div>
-                      <StatusBadge status={review.status || 'pending'} />
+                      <StatusBadge status={review.status || "pending"} />
                     </div>
-                    <p className="text-gray-700 text-sm mb-3">{review.comment}</p>
+                    <p className="text-gray-700 text-sm mb-3">
+                      {review.comment}
+                    </p>
                     <div className="flex items-center justify-between text-xs text-gray-500">
-                      <span>Product: {review.product_name || 'Unknown Product'}</span>
+                      <span>
+                        Product: {review.product_name || "Unknown Product"}
+                      </span>
                       <span>{formatDate(review.created_at)}</span>
                     </div>
                     <div className="flex gap-2 mt-3">
@@ -2579,7 +3456,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h2 className="text-xl font-semibold text-gray-900">Finance Management</h2>
+            <h2 className="text-xl font-semibold text-gray-900">
+              Finance Management
+            </h2>
             <p className="text-sm text-gray-600 mt-1">
               Manage platform finances, payouts, and revenue
             </p>
@@ -2609,7 +3488,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
               </div>
             </div>
           </div>
-          
+
           <div className="bg-white border border-blue-200 rounded-xl p-4">
             <div className="flex items-center gap-3 mb-4">
               <div className="p-2 bg-blue-100 rounded-lg">
@@ -2623,7 +3502,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
               </div>
             </div>
           </div>
-          
+
           <div className="bg-white border border-purple-200 rounded-xl p-4">
             <div className="flex items-center gap-3 mb-4">
               <div className="p-2 bg-purple-100 rounded-lg">
@@ -2641,30 +3520,45 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
         <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
           <div className="p-4 border-b border-gray-200">
-            <h3 className="text-sm font-semibold text-gray-900">Recent Transactions</h3>
+            <h3 className="text-sm font-semibold text-gray-900">
+              Recent Transactions
+            </h3>
           </div>
           <div className="p-4">
             {financeLoading ? (
               <div className="space-y-3">
-                {[1, 2, 3].map(i => (
+                {[1, 2, 3].map((i) => (
                   <div key={i} className="animate-pulse">
                     <div className="h-12 bg-gray-200 rounded-lg"></div>
                   </div>
                 ))}
               </div>
-            ) : financeData?.recentTransactions && financeData.recentTransactions.length > 0 ? (
+            ) : financeData?.transactions &&
+              financeData.transactions.length > 0 ? (
               <div className="space-y-3">
-                {financeData.recentTransactions.map((transaction: any) => (
-                  <div key={transaction.id} className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
-                    <div>
-                      <p className="font-medium text-gray-900">{transaction.description}</p>
-                      <p className="text-xs text-gray-500">{formatDate(transaction.date)}</p>
+                {financeData.transactions
+                  .slice(0, 5)
+                  .map((transaction: any) => (
+                    <div
+                      key={transaction.id}
+                      className="flex items-center justify-between p-3 border border-gray-200 rounded-lg"
+                    >
+                      <div>
+                        <p className="font-medium text-gray-900">
+                          {transaction.description}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          {formatDate(transaction.created_at)}
+                        </p>
+                      </div>
+                      <div
+                        className={`font-bold ${transaction.amount >= 0 ? "text-green-600" : "text-red-600"}`}
+                      >
+                        {transaction.amount >= 0 ? "+" : ""}
+                        {formatCurrency(transaction.amount)}
+                      </div>
                     </div>
-                    <div className={`font-bold ${transaction.amount >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                      {transaction.amount >= 0 ? '+' : ''}{formatCurrency(transaction.amount)}
-                    </div>
-                  </div>
-                ))}
+                  ))}
               </div>
             ) : (
               <div className="text-center py-8">
@@ -2678,15 +3572,23 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
     );
   };
 
+  // Wallet Section
+  const renderWallet = () => {
+    return renderPlaceholder("Wallet", "Manage platform wallet", Wallet);
+  };
+
   // Contracts Section
   const renderContracts = () => {
     return (
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h2 className="text-xl font-semibold text-gray-900">Contracts Management</h2>
+            <h2 className="text-xl font-semibold text-gray-900">
+              Contracts Management
+            </h2>
             <p className="text-sm text-gray-600 mt-1">
-              {contracts?.length || 0} active contracts • Manage seller agreements
+              {contracts?.length || 0} active contracts • Manage seller
+              agreements
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -2703,7 +3605,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
         <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
           <div className="p-4 border-b border-gray-200">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-semibold text-gray-900">All Contracts</h3>
+              <h3 className="text-sm font-semibold text-gray-900">
+                All Contracts
+              </h3>
               <div className="flex items-center gap-2">
                 <select className="border border-gray-300 rounded-lg px-3 py-1.5 text-sm">
                   <option value="all">All Contracts</option>
@@ -2714,11 +3618,11 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
               </div>
             </div>
           </div>
-          
+
           <div className="p-4">
             {contractsLoading ? (
               <div className="space-y-4">
-                {[1, 2, 3].map(i => (
+                {[1, 2, 3].map((i) => (
                   <div key={i} className="animate-pulse">
                     <div className="h-20 bg-gray-200 rounded-lg"></div>
                   </div>
@@ -2727,26 +3631,39 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
             ) : contracts && contracts.length > 0 ? (
               <div className="space-y-4">
                 {contracts.map((contract: any) => (
-                  <div key={contract.id} className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50">
+                  <div
+                    key={contract.id}
+                    className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50"
+                  >
                     <div className="flex items-start justify-between mb-2">
                       <div>
-                        <p className="font-medium text-gray-900">{contract.seller_name || 'Unknown Seller'}</p>
-                        <p className="text-sm text-gray-600">Contract ID: {contract.contract_number}</p>
+                        <p className="font-medium text-gray-900">
+                          {contract.seller_name || "Unknown Seller"}
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          Contract ID: {contract.contract_number}
+                        </p>
                       </div>
-                      <StatusBadge status={contract.status || 'active'} />
+                      <StatusBadge status={contract.status || "active"} />
                     </div>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                       <div>
                         <p className="text-gray-500">Start Date</p>
-                        <p className="font-medium text-gray-900">{formatDate(contract.start_date)}</p>
+                        <p className="font-medium text-gray-900">
+                          {formatDate(contract.start_date)}
+                        </p>
                       </div>
                       <div>
                         <p className="text-gray-500">End Date</p>
-                        <p className="font-medium text-gray-900">{formatDate(contract.end_date)}</p>
+                        <p className="font-medium text-gray-900">
+                          {formatDate(contract.end_date)}
+                        </p>
                       </div>
                       <div>
                         <p className="text-gray-500">Commission</p>
-                        <p className="font-medium text-gray-900">{contract.commission_rate}%</p>
+                        <p className="font-medium text-gray-900">
+                          {contract.commission_rate}%
+                        </p>
                       </div>
                       <div>
                         <p className="text-gray-500">Actions</p>
@@ -2775,13 +3692,31 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
     );
   };
 
+  const renderUser = () => {
+    return (
+      <div className="space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <AdminsPage />
+
+      </div>
+      </div>
+    )};
   // Advertising Section
+
+
+
+
+
+
+
   const renderAdvertising = () => {
     return (
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h2 className="text-xl font-semibold text-gray-900">Advertising Management</h2>
+            <h2 className="text-xl font-semibold text-gray-900">
+              Advertising Management
+            </h2>
             <p className="text-sm text-gray-600 mt-1">
               {ads?.length || 0} active campaigns • Manage platform advertising
             </p>
@@ -2791,7 +3726,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
               icon={Plus}
               label="New Campaign"
               variant="primary"
-              onClick={() => navigate('/admin/advertising/new')}
+              onClick={() => navigate("/admin/advertising/new")}
             />
             <ActionButton
               icon={RefreshCw}
@@ -2806,7 +3741,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
         <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
           <div className="p-4 border-b border-gray-200">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-semibold text-gray-900">Advertising Campaigns</h3>
+              <h3 className="text-sm font-semibold text-gray-900">
+                Advertising Campaigns
+              </h3>
               <div className="flex items-center gap-2">
                 <select className="border border-gray-300 rounded-lg px-3 py-1.5 text-sm">
                   <option value="all">All Campaigns</option>
@@ -2817,11 +3754,11 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
               </div>
             </div>
           </div>
-          
+
           <div className="p-4">
             {adsLoading ? (
               <div className="space-y-4">
-                {[1, 2, 3].map(i => (
+                {[1, 2, 3].map((i) => (
                   <div key={i} className="animate-pulse">
                     <div className="h-24 bg-gray-200 rounded-lg"></div>
                   </div>
@@ -2830,30 +3767,43 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
             ) : ads && ads.length > 0 ? (
               <div className="space-y-4">
                 {ads.map((ad: any) => (
-                  <div key={ad.id} className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50">
+                  <div
+                    key={ad.id}
+                    className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50"
+                  >
                     <div className="flex items-start justify-between mb-3">
                       <div>
                         <p className="font-medium text-gray-900">{ad.name}</p>
-                        <p className="text-sm text-gray-600">{ad.description}</p>
+                        <p className="text-sm text-gray-600">
+                          {ad.description}
+                        </p>
                       </div>
-                      <StatusBadge status={ad.status || 'active'} />
+                      <StatusBadge status={ad.status || "active"} />
                     </div>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                       <div>
                         <p className="text-gray-500">Budget</p>
-                        <p className="font-medium text-gray-900">{formatCurrency(ad.budget)}</p>
+                        <p className="font-medium text-gray-900">
+                          {formatCurrency(ad.budget)}
+                        </p>
                       </div>
                       <div>
                         <p className="text-gray-500">Spent</p>
-                        <p className="font-medium text-gray-900">{formatCurrency(ad.spent || 0)}</p>
+                        <p className="font-medium text-gray-900">
+                          {formatCurrency(ad.spent || 0)}
+                        </p>
                       </div>
                       <div>
                         <p className="text-gray-500">Impressions</p>
-                        <p className="font-medium text-gray-900">{ad.impressions?.toLocaleString() || 0}</p>
+                        <p className="font-medium text-gray-900">
+                          {ad.impressions?.toLocaleString() || 0}
+                        </p>
                       </div>
                       <div>
                         <p className="text-gray-500">Clicks</p>
-                        <p className="font-medium text-gray-900">{ad.clicks?.toLocaleString() || 0}</p>
+                        <p className="font-medium text-gray-900">
+                          {ad.clicks?.toLocaleString() || 0}
+                        </p>
                       </div>
                     </div>
                     <div className="flex gap-2 mt-3">
@@ -2861,7 +3811,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
                         Edit
                       </button>
                       <button className="px-3 py-1 text-xs bg-green-100 text-green-800 rounded hover:bg-green-200">
-                        {ad.status === 'active' ? 'Pause' : 'Activate'}
+                        {ad.status === "active" ? "Pause" : "Activate"}
                       </button>
                       <button className="px-3 py-1 text-xs bg-red-100 text-red-800 rounded hover:bg-red-200">
                         Delete
@@ -2874,8 +3824,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
               <div className="text-center py-8">
                 <Megaphone className="w-12 h-12 text-gray-300 mx-auto mb-3" />
                 <p className="text-gray-500">No advertising campaigns found</p>
-                <button 
-                  onClick={() => navigate('/admin/advertising/new')}
+                <button
+                  onClick={() => navigate("/admin/advertising/new")}
                   className="mt-3 px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-900 text-sm"
                 >
                   Create First Campaign
@@ -2894,7 +3844,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h2 className="text-xl font-semibold text-gray-900">Platform Analytics</h2>
+            <h2 className="text-xl font-semibold text-gray-900">
+              Platform Analytics
+            </h2>
             <p className="text-sm text-gray-600 mt-1">
               Detailed insights and performance metrics
             </p>
@@ -2911,7 +3863,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
               icon={Download}
               label="Export"
               variant="secondary"
-              onClick={() => toast.info('Export feature coming soon')}
+              onClick={() => toast.info("Export feature coming soon")}
             />
           </div>
         </div>
@@ -2925,12 +3877,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
               <div>
                 <p className="text-sm text-gray-600">Total Visits</p>
                 <p className="text-xl font-bold text-gray-900">
-                  {reports?.totalVisits?.toLocaleString() || '0'}
+                  {reports && reports.length > 0
+                    ? reports[0]?.totalVisits?.toLocaleString() || "0"
+                    : "0"}
                 </p>
               </div>
             </div>
           </div>
-          
+
           <div className="bg-white border border-gray-200 rounded-xl p-4">
             <div className="flex items-center gap-3 mb-4">
               <div className="p-2 bg-green-100 rounded-lg">
@@ -2939,12 +3893,12 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
               <div>
                 <p className="text-sm text-gray-600">Conversion Rate</p>
                 <p className="text-xl font-bold text-gray-900">
-                  {reports?.conversionRate || '0'}%
+                  {mainReport?.totalVisits?.toLocaleString() || "0"}
                 </p>
               </div>
             </div>
           </div>
-          
+
           <div className="bg-white border border-gray-200 rounded-xl p-4">
             <div className="flex items-center gap-3 mb-4">
               <div className="p-2 bg-purple-100 rounded-lg">
@@ -2953,7 +3907,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
               <div>
                 <p className="text-sm text-gray-600">Avg. Order Value</p>
                 <p className="text-xl font-bold text-gray-900">
-                  {formatCurrency(reports?.avgOrderValue || 0)}
+                  {formatCurrency(mainReport?.avgOrderValue || 0)}
                 </p>
               </div>
             </div>
@@ -2961,29 +3915,40 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
         </div>
 
         <div className="bg-white border border-gray-200 rounded-xl p-4">
-          <h3 className="text-sm font-semibold text-gray-900 mb-4">Top Products</h3>
+          <h3 className="text-sm font-semibold text-gray-900 mb-4">
+            Top Products
+          </h3>
           {reportsLoading ? (
             <div className="space-y-3">
-              {[1, 2, 3].map(i => (
+              {[1, 2, 3].map((i) => (
                 <div key={i} className="animate-pulse">
                   <div className="h-12 bg-gray-200 rounded-lg"></div>
                 </div>
               ))}
             </div>
-          ) : reports?.topProducts && reports.topProducts.length > 0 ? (
+          ) : mainReport?.topProducts && mainReport.topProducts.length > 0 ? (
             <div className="space-y-3">
-              {reports.topProducts.map((product: any, index: number) => (
-                <div key={product.id} className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
+              {mainReport.topProducts.map((product: any, index: number) => (
+                <div
+                  key={product.id}
+                  className="flex items-center justify-between p-3 border border-gray-200 rounded-lg"
+                >
                   <div className="flex items-center gap-3">
                     <span className="w-6 h-6 flex items-center justify-center bg-gray-100 text-gray-700 rounded-full text-xs font-bold">
                       {index + 1}
                     </span>
                     <div>
-                      <p className="font-medium text-gray-900 text-sm">{product.name}</p>
-                      <p className="text-xs text-gray-500">{product.sales} sales</p>
+                      <p className="font-medium text-gray-900 text-sm">
+                        {product.name}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {product.sales} sales
+                      </p>
                     </div>
                   </div>
-                  <div className="font-bold text-gray-900">{formatCurrency(product.revenue)}</div>
+                  <div className="font-bold text-gray-900">
+                    {formatCurrency(product.revenue)}
+                  </div>
                 </div>
               ))}
             </div>
@@ -3004,7 +3969,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h2 className="text-xl font-semibold text-gray-900">Activity Logs</h2>
+            <h2 className="text-xl font-semibold text-gray-900">
+              Activity Logs
+            </h2>
             <p className="text-sm text-gray-600 mt-1">
               {logs?.length || 0} log entries • System activity and audit trail
             </p>
@@ -3023,7 +3990,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
         <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
           <div className="p-4 border-b border-gray-200">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-semibold text-gray-900">System Activity</h3>
+              <h3 className="text-sm font-semibold text-gray-900">
+                System Activity
+              </h3>
               <div className="flex items-center gap-2">
                 <select className="border border-gray-300 rounded-lg px-3 py-1.5 text-sm">
                   <option value="all">All Activities</option>
@@ -3034,11 +4003,11 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
               </div>
             </div>
           </div>
-          
+
           <div className="p-4">
             {logsLoading ? (
               <div className="space-y-4">
-                {[1, 2, 3].map(i => (
+                {[1, 2, 3].map((i) => (
                   <div key={i} className="animate-pulse">
                     <div className="h-16 bg-gray-200 rounded-lg"></div>
                   </div>
@@ -3046,28 +4015,37 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
               </div>
             ) : logs && logs.length > 0 ? (
               <div className="space-y-3">
-                {logs.map((log: any) => (
-                  <div key={log.id} className="border border-gray-200 rounded-lg p-3 hover:bg-gray-50">
+                {logs.slice(0, 10).map((log: any) => (
+                  <div
+                    key={log.id}
+                    className="border border-gray-200 rounded-lg p-3 hover:bg-gray-50"
+                  >
                     <div className="flex items-start justify-between mb-1">
                       <p className="font-medium text-gray-900 text-sm capitalize">
-                        {log.action?.replace(/_/g, ' ')}
+                        {log.action?.replace(/_/g, " ")}
                       </p>
-                      <span className="text-xs text-gray-500">{formatTime(log.created_at)}</span>
+                      <span className="text-xs text-gray-500">
+                        {formatTime(log.created_at)}
+                      </span>
                     </div>
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-xs text-gray-600">
-                          By: {log.user_name || 'System'} • 
-                          Type: {log.user_type} • 
-                          Target: {log.target_type}
+                          By: {log.user_name || "System"} • Type:{" "}
+                          {log.user_type} • Target: {log.target_type}
                         </p>
                         {log.details && (
                           <p className="text-xs text-gray-500 mt-1 truncate">
-                            Details: {typeof log.details === 'string' ? log.details : JSON.stringify(log.details)}
+                            Details:{" "}
+                            {typeof log.details === "string"
+                              ? log.details
+                              : JSON.stringify(log.details)}
                           </p>
                         )}
                       </div>
-                      <span className="text-xs text-gray-400">{formatDate(log.created_at)}</span>
+                      <span className="text-xs text-gray-400">
+                        {formatDate(log.created_at)}
+                      </span>
                     </div>
                   </div>
                 ))}
@@ -3090,7 +4068,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h2 className="text-xl font-semibold text-gray-900">Platform Settings</h2>
+            <h2 className="text-xl font-semibold text-gray-900">
+              Platform Settings
+            </h2>
             <p className="text-sm text-gray-600 mt-1">
               Configure platform settings and preferences
             </p>
@@ -3100,16 +4080,18 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
               icon={Save}
               label="Save Changes"
               variant="primary"
-              onClick={() => toast.success('Settings saved successfully')}
+              onClick={() => toast.success("Settings saved successfully")}
             />
           </div>
         </div>
 
         <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
           <div className="p-4 border-b border-gray-200">
-            <h3 className="text-sm font-semibold text-gray-900">General Settings</h3>
+            <h3 className="text-sm font-semibold text-gray-900">
+              General Settings
+            </h3>
           </div>
-          
+
           <div className="p-6 space-y-6">
             <div>
               <label className="block text-sm font-medium text-gray-900 mb-2">
@@ -3121,7 +4103,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-400 focus:border-transparent"
               />
             </div>
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-900 mb-2">
                 Default Commission Rate
@@ -3135,7 +4117,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 <span className="text-gray-600">%</span>
               </div>
             </div>
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-900 mb-2">
                 Platform Currency
@@ -3147,18 +4129,30 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 <option value="GBP">GBP (£)</option>
               </select>
             </div>
-            
+
             <div>
               <label className="flex items-center gap-2">
-                <input type="checkbox" className="rounded text-blue-500" defaultChecked />
-                <span className="text-sm text-gray-900">Enable Email Notifications</span>
+                <input
+                  type="checkbox"
+                  className="rounded text-blue-500"
+                  defaultChecked
+                />
+                <span className="text-sm text-gray-900">
+                  Enable Email Notifications
+                </span>
               </label>
             </div>
-            
+
             <div>
               <label className="flex items-center gap-2">
-                <input type="checkbox" className="rounded text-blue-500" defaultChecked />
-                <span className="text-sm text-gray-900">Enable SMS Notifications</span>
+                <input
+                  type="checkbox"
+                  className="rounded text-blue-500"
+                  defaultChecked
+                />
+                <span className="text-sm text-gray-900">
+                  Enable SMS Notifications
+                </span>
               </label>
             </div>
           </div>
@@ -3167,41 +4161,78 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
     );
   };
 
-  // Placeholder for unimplemented sections
-  const renderPlaceholder = (title: string, description: string, Icon: React.ElementType) => {
-    return (
-      <div className="space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <h2 className="text-xl font-semibold text-gray-900">{title}</h2>
-            <p className="text-sm text-gray-600 mt-1">{description}</p>
-          </div>
-        </div>
-        <div className="bg-white border border-gray-200 rounded-xl p-6 text-center">
-          <Icon className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-          <h3 className="text-lg font-semibold text-gray-600">{title}</h3>
-          <p className="text-gray-500">Coming soon - Implementation in progress</p>
-          <button
-            onClick={() => toast.info(`Feature coming soon: ${title}`)}
-            className="mt-4 px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-900 text-sm"
-          >
-            Notify When Ready
-          </button>
-        </div>
-      </div>
+  // const isLoading = dashboardLoading || sellersLoading || productsLoading || ordersLoading;
+  const isLoading = false; // Simplified for demonstration
+  console.log("Overall Loading State:", isLoading);
+
+  const renderActiveSection = () => {
+    switch (activeSection) {
+      case "dashboard":
+        return renderDashboard();
+      case "users":
+        return renderUser();
+      case "products":
+        return renderProducts();
+      case "orders":
+        return renderOrders();
+      case "reviews":
+        return renderReviews();
+      case "finance":
+        return renderFinance();
+      case "wallet":
+        return renderWallet();
+      case "categories":
+        return renderPlaceholder(
+          "Categories",
+          "Manage product categories",
+          FolderTree,
+        );
+      case "contracts":
+        return renderContracts();
+      case "advertising":
+        return renderAdvertising();
+      case "analytics":
+        return renderAnalytics();
+      case "activity":
+        return renderActivityLogs();
+      case "settings":
+        return renderSettings();
+      default:
+        return renderDashboard();
+    }
+  };
+  const [expandedDropdowns, setExpandedDropdowns] = useState<string[]>([]);
+
+  // Add this function to handle dropdown toggles
+  const handleDropdownToggle = (itemId: string) => {
+    setExpandedDropdowns((prev) =>
+      prev.includes(itemId)
+        ? prev.filter((id) => id !== itemId)
+        : [...prev, itemId],
     );
   };
-
-  const isLoading = dashboardLoading || sellersLoading || productsLoading || ordersLoading;
 
   // Sidebar Component
-  const Sidebar = ({ isMobile = false, onClose }: { isMobile?: boolean; onClose?: () => void }) => {
-    const userEmail = currentUser?.email || 'admin@premiumfurniture.com';
-    const userName = currentUser?.user_metadata?.full_name || 'Admin User';
-    const pendingCount = sellerApplications?.filter(app => app.status === 'pending').length || 0;
-    
+  const Sidebar = ({
+    isMobile = false,
+    onClose,
+  }: {
+    isMobile?: boolean;
+    onClose?: () => void;
+  }) => {
+    const userEmail = currentUser?.email || "admin@premiumfurniture.com";
+    const userName = currentUser?.user_metadata?.full_name || "Admin User";
+    const pendingCount = sellerApplications
+      ? sellerApplications.filter(
+          (app: SellerApplication) => app.status === "pending",
+        ).length
+      : 0;
+ 
+
     return (
-      <div className={`${isMobile ? 'fixed inset-0 z-50 bg-white' : 'w-64 bg-white border-r border-gray-200 hidden lg:block'} h-full flex flex-col`}>
+      <div
+        className={`${isMobile ? "fixed inset-0 z-50 bg-white" : "w-64 bg-white border-r border-gray-200 hidden lg:block"} h-full flex flex-col`}
+      >
         {isMobile && (
           <div className="flex items-center justify-between p-4 border-b border-gray-200">
             <div className="flex items-center space-x-2">
@@ -3209,35 +4240,42 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 <Shield className="w-4 h-4 text-white" />
               </div>
               <div>
-                <h1 className="text-sm font-semibold text-gray-900">Admin Panel</h1>
+                <h1 className="text-sm font-semibold text-gray-900">
+                  Admin Panel
+                </h1>
                 <p className="text-xs text-gray-500">Premium Furniture</p>
               </div>
             </div>
-            <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded-lg">
+            <button
+              onClick={onClose}
+              className="p-1 hover:bg-gray-100 rounded-lg"
+            >
               <X className="w-5 h-5 text-gray-700" />
             </button>
           </div>
         )}
-        
+
         {!isMobile && (
           <div className="p-4 border-b border-gray-200">
             <div className="flex items-center space-x-2 mb-3">
-              <div className="w-8 h-8 bg-gray-900 rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-yellow-500 rounded-lg flex items-center justify-center">
                 <Shield className="w-4 h-4 text-white" />
               </div>
-              <div>
-                <h1 className="text-sm font-semibold text-gray-900">Admin Panel</h1>
-                <p className="text-xs text-gray-500">Premium Furniture</p>
+              <div className=" ">
+                <h1 className="text-2xl  font-bold text-gray-900">
+                 Admin Central
+                </h1>
+                <p className="text-xs font-bold text-gray-500">Premium Furniture</p>
               </div>
             </div>
-            <div className="mt-2 text-xs text-gray-600">
+            <div className="mt-2 text-xs text-gray-600 hidden ">
               <p className="font-medium text-gray-900">{userName}</p>
               <p className="text-gray-500 truncate">{userEmail}</p>
             </div>
           </div>
         )}
 
-        <nav className="flex-1 p-2 overflow-y-auto">
+         <nav className="flex-1 p-2 overflow-y-auto">
           {navItems.map((item) => (
             <button
               key={item.id}
@@ -3262,7 +4300,11 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
           ))}
         </nav>
 
-        <div className="p-4 border-t border-gray-200 space-y-2">
+        {/* dropdown  navbar */}
+     
+
+
+        <div className="p-4 border-t border-gray-200 space-y-2 bg-gray-100">
           <button
             onClick={handleSignOut}
             className="flex items-center space-x-2 text-gray-700 hover:text-gray-900 text-sm font-medium w-full px-3 py-2 rounded-lg hover:bg-gray-50"
@@ -3282,7 +4324,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
         {showMobileMenu && (
           <div className="fixed inset-0 z-40 lg:hidden">
-            <div className="fixed inset-0 bg-black bg-opacity-50" onClick={() => setShowMobileMenu(false)} />
+            <div
+              className="fixed inset-0 bg-black bg-opacity-50"
+              onClick={() => setShowMobileMenu(false)}
+            />
             <div className="relative max-w-xs w-full h-full">
               <Sidebar isMobile onClose={() => setShowMobileMenu(false)} />
             </div>
@@ -3304,7 +4349,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
                     <Shield className="w-4 h-4 text-white" />
                   </div>
                   <div>
-                    <h1 className="text-sm font-semibold text-gray-900">Admin Panel</h1>
+                    <h1 className="text-sm font-semibold text-gray-900">
+                      Admin Panel
+                    </h1>
                     <p className="text-xs text-gray-500">Premium Furniture</p>
                   </div>
                 </div>
@@ -3314,7 +4361,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   onClick={refreshAllData}
                   className="p-1.5 hover:bg-gray-100 rounded-lg"
                 >
-                  <RefreshCw className={`w-4 h-4 text-gray-700 ${isLoading ? 'animate-spin' : ''}`} />
+                  <RefreshCw
+                    className={`w-4 h-4 text-gray-700 ${isLoading ? "animate-spin" : ""}`}
+                  />
                 </button>
                 <button
                   onClick={() => refreshNotifications()}
@@ -3333,37 +4382,42 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
             <div className="hidden lg:flex items-center justify-between mb-6">
               <div>
                 <h1 className="text-2xl font-bold text-gray-900 capitalize">
-                  {activeSection === 'dashboard' ? 'Dashboard' : activeSection.replace(/_/g, ' ')}
+                  {activeSection === "dashboard"
+                    ? "Dashboard"
+                    : activeSection.replace(/_/g, " ")}
                 </h1>
                 <p className="text-gray-600 mt-1">
-                  {activeSection === 'dashboard' 
-                    ? 'Platform overview and analytics'
-                    : `Manage ${activeSection.replace(/_/g, ' ')}`}
+                  {activeSection === "dashboard"
+                    ? "Platform overview and analytics"
+                    : `Manage ${activeSection.replace(/_/g, " ")}`}
                 </p>
               </div>
-              
+
               <div className="flex items-center gap-3">
-                {activeSection !== 'dashboard' && activeSection !== 'settings' && (
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                    <input
-                      type="text"
-                      placeholder={`Search ${activeSection}...`}
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
-                    />
-                  </div>
-                )}
-                
+                {activeSection !== "dashboard" &&
+                  activeSection !== "settings" && (
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                      <input
+                        type="text"
+                        placeholder={`Search ${activeSection}...`}
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
+                      />
+                    </div>
+                  )}
+
                 <button
                   onClick={refreshAllData}
                   className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
                   title="Refresh data"
                 >
-                  <RefreshCw className={`w-4 h-4 text-gray-700 ${isLoading ? 'animate-spin' : ''}`} />
+                  <RefreshCw
+                    className={`w-4 h-4 text-gray-700 ${isLoading ? "animate-spin" : ""}`}
+                  />
                 </button>
-                
+
                 <button
                   onClick={() => refreshNotifications()}
                   className="relative p-2 hover:bg-gray-100 rounded-lg transition-colors"
@@ -3374,38 +4428,45 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
                     <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full"></span>
                   )}
                 </button>
-                
+
                 <div className="flex items-center space-x-2">
                   <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
                     <span className="text-sm font-semibold text-gray-700">
-                      {currentUser?.user_metadata?.full_name?.charAt(0).toUpperCase() || 'A'}
+                      {currentUser?.user_metadata?.full_name
+                        ?.charAt(0)
+                        .toUpperCase() || "A"}
                     </span>
                   </div>
                 </div>
               </div>
             </div>
 
-            {isLoading && activeSection === 'dashboard' ? (
+            {isLoading && activeSection === "dashboard" ? (
               <div className="flex items-center justify-center py-12">
                 <div className="text-center">
                   <Loader2 className="inline-block animate-spin w-8 h-8 text-gray-900 mb-3" />
-                  <p className="mt-3 text-gray-600">Loading dashboard data...</p>
+                  <p className="mt-3 text-gray-600">
+                    Loading dashboard data...
+                  </p>
                 </div>
               </div>
             ) : (
-              <div className="space-y-6">
-                {renderActiveSection()}
-              </div>
+              <div className="space-y-6">{renderActiveSection()}</div>
             )}
 
             <div className="mt-8 pt-6 border-t border-gray-200">
               <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
                 <p className="text-xs text-gray-500">
-                  © {new Date().getFullYear()} Premium Furniture • Admin Panel v2.0
+                  © {new Date().getFullYear()} Premium Furniture • Admin Panel
+                  v2.0
                 </p>
                 <div className="flex items-center gap-4">
                   <p className="text-xs text-gray-500">
-                    Last sync: {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    Last sync:{" "}
+                    {new Date().toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
                   </p>
                   <button
                     onClick={handleSignOut}
@@ -3450,24 +4511,29 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
           title={modalState.title}
           message={modalState.message}
           confirmLabel={
-            modalState.type === 'approve' ? 'Approve' :
-            modalState.type === 'reject' ? 'Reject' :
-            modalState.type === 'delete' ? 'Delete' :
-            modalState.type === 'suspend' ? 'Suspend' :
-            modalState.type === 'activate' ? 'Activate' :
-            'Confirm'
+            modalState.type === "approve"
+              ? "Approve"
+              : modalState.type === "reject"
+                ? "Reject"
+                : modalState.type === "delete"
+                  ? "Delete"
+                  : modalState.type === "suspend"
+                    ? "Suspend"
+                    : modalState.type === "activate"
+                      ? "Activate"
+                      : "Confirm"
           }
           cancelLabel="Cancel"
           onConfirm={() => {
-            if (modalState.type === 'approve') {
+            if (modalState.type === "approve") {
               handleApproveSeller(modalState.data);
-            } else if (modalState.type === 'reject') {
+            } else if (modalState.type === "reject") {
               handleRejectSeller(modalState.data);
-            } else if (modalState.type === 'delete') {
+            } else if (modalState.type === "delete") {
               handleDeleteProduct(modalState.data);
-            } else if (modalState.type === 'suspend') {
+            } else if (modalState.type === "suspend") {
               handleSuspendProduct(modalState.data);
-            } else if (modalState.type === 'activate') {
+            } else if (modalState.type === "activate") {
               handleActivateProduct(modalState.data);
             }
             setModalState(null);

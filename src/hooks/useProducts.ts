@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
-import { supabase } from '@/lib/supabase';
-import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '../lib/supabase'
+// import { useAuth } from './useAuth';
+import { useAuth } from '../contexts/AuthContext';
 
 export interface Product {
   id: string;
@@ -244,16 +245,35 @@ export const useProducts = () => {
     }
   }, [user?.id, fetchProducts]);
 
-  return {
-    products,
-    loading,
-    error,
-    createProduct,
-    updateProduct,
-    deleteProduct,
-    updateStock,
-    toggleFeatured,
-    reload,
-    categories: [] // Add actual categories if needed
-  };
+  // --------------------
+// Derived values
+// --------------------
+const pendingProducts = products.filter(
+  product => product.status === "pending"
+);
+
+const productStats = {
+  total: products.length,
+  active: products.filter(p => p.status === "active").length,
+  pending: pendingProducts.length,
+  draft: products.filter(p => p.status === "draft").length,
+  archived: products.filter(p => p.status === "archived").length,
+};
+
+ return {
+  products,
+  pendingProducts,
+  productStats,
+  loading,
+  error,
+  fetchProducts, // 👈 expose it
+  createProduct,
+  updateProduct,
+  deleteProduct,
+  updateStock,
+  toggleFeatured,
+  reload,
+  categories: []
+};
+
 };

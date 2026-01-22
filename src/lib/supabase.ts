@@ -1,18 +1,18 @@
 // lib/supabase.ts
-import { createClient } from '@supabase/supabase-js';
+
 // import type { Database } from '@/types/supabase';
 // import type { Database } from "../types/
 import { Database } from '.';
 
+
 // Get environment variables
+import { createClient, REALTIME_LISTEN_TYPES } from "@supabase/supabase-js";
+
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-const supabaseServiceKey = import.meta.env.VITE_SUPABASE_SERVICE_ROLE_KEY;
 
-// Validate environment variables
-if (!supabaseUrl) {
-  console.error('❌ Missing VITE_SUPABASE_URL');
-  throw new Error('Missing Supabase URL');
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error("Missing Supabase environment variables");
 }
 
 if (!supabaseAnonKey) {
@@ -20,10 +20,7 @@ if (!supabaseAnonKey) {
   throw new Error('Missing Supabase Anon Key');
 }
 
-console.log('✅ Supabase URL:', supabaseUrl);
-console.log('✅ Anon Key exists:', !!supabaseAnonKey);
-console.log('✅ Service Key exists:', !!supabaseServiceKey);
-
+const supabaseServiceKey = import.meta.env.VITE_SUPABASE_SERVICE_KEY || '';
 // ==================== REGULAR CLIENT (Frontend) ====================
 export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
   auth: {
@@ -575,27 +572,46 @@ export const getAdminProfile = async () => {
 /**
  * Subscribe to real-time changes in a table
  */
+// export const subscribeToTable = (
+//   table: keyof Database['public']['Tables'],
+//   event: 'INSERT' | 'UPDATE' | 'DELETE' | '*',
+//   callback: (payload: any) => void
+// ) => {
+//   return supabase
+//     .channel(`realtime:${table}`)
+//     .on(
+//       'postgres_changes',
+//       {
+//         event,
+//         schema: 'public',
+//         table: table as string,
+//       },
+//       (payload) => {
+//         console.log(`📡 Real-time update for ${table}:`, payload);
+//         callback(payload);
+//       }
+//     )
+//     .subscribe((status) => {
+//       console.log(`📡 Subscription status for ${table}:`, status);
+//     });
+// };
 export const subscribeToTable = (
   table: keyof Database['public']['Tables'],
   event: 'INSERT' | 'UPDATE' | 'DELETE' | '*',
   callback: (payload: any) => void
 ) => {
   return supabase
-    .channel(`realtime:${table}`)
-    .on(
-      'postgres_changes',
-      {
-        event,
-        schema: 'public',
-        table: table as string,
-      },
-      (payload) => {
-        console.log(`📡 Real-time update for ${table}:`, payload);
-        callback(payload);
-      }
-    )
+    .channel(`realtime:${String(table)}`)
+    .on('postgres_changes' as REALTIME_LISTEN_TYPES, {
+      event,
+      schema: 'public',
+      table: String(table),
+    }, (payload: any) => {
+      console.log(`📡 Real-time update for ${String(table)}:`, payload);
+      callback(payload);
+    })
     .subscribe((status) => {
-      console.log(`📡 Subscription status for ${table}:`, status);
+      console.log(`📡 Subscription status for ${String(table)}:`, status);
     });
 };
 

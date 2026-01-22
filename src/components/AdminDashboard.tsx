@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+
 // Lucide React imports
 import { 
   Home,
@@ -230,21 +231,26 @@ import {
 } from 'lucide-react';
 
 // Import hooks
-import { supabaseAdmin as supabase } from '@/lib/supabase';
-import AdminAdvertising from '@/components/adminadvertising';
-import ActivityLogs from '@/components/ActivityLogs';
-import SellerDetailModal from '@/components/SellerDetailModal';
+import { supabaseAdmin as supabase } from '../lib/supabase'
+// import AdminAdvertising from 'AdminAdvertising
+
+// import ActivityLogs from '@/components/ActivityLogs';
+import ActivityLogs from './ActivityLogs';
 
 // Hooks
-import { useDashboardData } from '@/hooks/useDashboardData';
-import { useSellers } from '@/hooks/useSellers';
-import { useProducts } from '@/hooks/useProducts';
-import { useOrders } from '@/hooks/useOrders';
-import { useReviews } from '@/hooks/useReviews';
-import { useWallet } from '@/hooks/useWallet';
-import { useContracts } from '@/hooks/useContracts';
-import { useAdvertising } from '@/hooks/useAdvertising';
-import { useActivityLogs } from '@/hooks/useActivityLogs';
+// import { useDashboardData } from '@/hooks/useDashboardData';
+import { useDashboardData } from '../hooks/useDashboardData';
+import {useSellers} from '../hooks/useSellers';
+import { useProducts } from '../hooks/useProducts';
+import { useOrders } from '../hooks/useOrders';
+import { useReviews } from '../hooks/useReviews';
+import { useWallet } from '../hooks/useWallet';
+// import { useContracts } from '../useAccountSettings/hooks/useContracts';
+import {useContracts} from '../hooks/useContracts';
+import { useAdvertising } from '../hooks/useAdvertising';
+// import { useActivityLogs } from '@/hooks/useActivityLogs';
+import {useActivityLogs} from '../hooks/useActivityLogs';
+import SellerDetailModal from './SellerDetailModal';
 
 // Types
 interface AdminDashboardProps {
@@ -535,27 +541,21 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate, section: pr
     fetchSellerStats: fetchHookSellerStats,
   } = useSellers();
 
-  const {
-    products: allProducts,
-    pendingProducts,
-    productStats: hookProductStats,
-    loading: hookProductsLoading,
-    fetchProducts: fetchHookProducts,
-  } = useProducts();
+ const {
+  products: allProducts,
+  pendingProducts,
+  productStats: hookProductStats,
+  loading: hookProductsLoading,
+  fetchProducts,
+} = useProducts();
 
-  const {
-    orders: allOrders,
-    orderStats,
-    recentOrders = [],
-    loading: ordersLoading,
-  } = useOrders();
+  const { orders: allOrders,  orderStats,recentOrders = [],loading: ordersLoading, } = useOrders();
 
-  const {
-    reviews: allReviews,
-    reviewStats,
-    pendingReviews,
-    loading: reviewsLoading,
-  } = useReviews();
+//  const { reviews, reviewStats, pendingReviews, loading: reviewsLoading } = useReview);
+const sellerId = currentUser?.id || 'demo-seller'; // or get from context/auth
+
+const { reviews, reviewStats, pendingReviews, loading: reviewsLoading } = useReviews(sellerId);
+
 
   const {
     stats: walletStats,
@@ -1869,31 +1869,48 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate, section: pr
     suspended: users.filter(u => u.status === 'suspended').length,
   };
 
-  const stats = {
-    totalRevenue: walletStats?.total_revenue || orderStats?.totalRevenue || metrics?.totalRevenue || 0,
-    totalOrders: orderStats?.total || metrics?.totalOrders || 0,
-    totalSellers: userStats.sellers || activeSellers.length || 0,
-    totalBuyers: userStats.buyers || 0,
-    totalUsers: userStats.total || 0,
-    totalProducts: productStats.total || 0,
-    pendingProducts: productStats.pending || 0,
-    pendingApprovals: applicationStats?.applications?.pending || 0,
-    pendingPayouts: walletStats?.pending_payouts || payoutSummary?.total_pending || additionalMetrics.pendingPayments || 0,
-    todayOrders: orderStats?.today || 0,
-    monthlyRevenue: walletStats?.total_revenue || 0,
-    activeDisputes: reviewStats?.pending || 0,
-    pendingAds: adStats?.pending_ads || 0,
-    lowStockAlerts: productStats?.low_stock || 0,
-    approvedSellers: activeSellers.length || 0,
-    approvedProducts: productStats.active || 0,
-    pendingReviews: reviewStats?.pending || 0,
-    avgRating: reviewStats?.avg_rating || 0,
-    platformEarnings: walletStats?.platform_earnings || 0,
-    activeContracts: contractStats?.active_contracts || 0,
-    totalImpressions: adStats?.total_impressions || 0,
-    todayActivities: activityStats?.today || 0,
-    ...additionalMetrics,
-  };
+// Compute stats for admin dashboard
+const stats = {
+  // Revenue & Orders
+  totalRevenue: walletStats?.total_revenue || orderStats?.totalRevenue || metrics?.totalRevenue || 0,
+  monthlyRevenue: walletStats?.total_revenue || 0,
+  totalOrders: orderStats?.total || metrics?.totalOrders || 0,
+  todayOrders: orders?.filter(o => new Date(o.created_at).toDateString() === new Date().toDateString()).length || 0, // today’s orders
+
+  // Users
+  totalSellers: userStats?.sellers || activeSellers?.length || 0,
+  approvedSellers: activeSellers?.length || 0,
+  totalBuyers: userStats?.buyers || 0,
+  totalUsers: userStats?.total || 0,
+
+  // Products
+  totalProducts: productStats?.total || 0,
+  approvedProducts: productStats?.active || 0,
+  pendingProducts: productStats?.pending || 0,
+  lowStockAlerts: productStats?.low_stock || 0,
+
+  // Reviews & Ratings
+  pendingReviews: reviewStats?.pending || 0,
+  activeDisputes: reviewStats?.pending || 0,
+  avgRating: reviewStats?.avg_rating || 0,
+
+  // Wallet & Payouts
+  pendingPayouts: walletStats?.pending_payouts || payoutSummary?.total_pending || additionalMetrics?.pendingPayments || 0,
+  platformEarnings: walletStats?.platform_earnings || 0,
+
+  // Applications / Ads / Contracts
+  pendingApprovals: applicationStats?.applications?.pending || 0,
+  pendingAds: adStats?.pending_ads || 0,
+  totalImpressions: adStats?.total_impressions || 0,
+  activeContracts: contractStats?.active_contracts || 0,
+
+  // Activities
+  todayActivities: activityStats?.today || 0,
+
+  // Merge any additional metrics
+  ...additionalMetrics,
+};
+
 
   const handleDownloadExcel = () => {
     alert('Downloading data as Excel...');
@@ -3740,7 +3757,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate, section: pr
           {activeSection === 'reviews' && renderOtherSection('Reviews', 'Moderate product reviews')}
           {activeSection === 'wallet' && renderOtherSection('Wallet', 'Manage payouts and commissions')}
           {activeSection === 'contracts' && renderOtherSection('Contracts', 'Manage seller contracts')}
-          {activeSection === 'advertising' && <AdminAdvertising />}
+          {/* {activeSection === 'advertising' && <AdminAdvertising />} */}
           {activeSection === 'analytics' && renderOtherSection('Analytics', 'Platform performance insights')}
           {activeSection === 'activity' && <ActivityLogs />}
           {activeSection === 'settings' && renderOtherSection('Settings', 'Platform configuration')}

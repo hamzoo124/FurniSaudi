@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabaseAdmin as supabase } from '../lib/supabase';
-import { supabase } from '@/lib/supabase';
 
 interface DashboardMetrics {
   totalRevenue: number;

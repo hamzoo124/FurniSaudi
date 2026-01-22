@@ -16,8 +16,6 @@ import {
   AiOutlineArrowRight
 } from "react-icons/ai";
 
-
-
   
 interface Product {
   id: string;
@@ -63,6 +61,8 @@ const CartPage: React.FC<CartPageProps> = ({ onNavigate, isLoggedIn }) => {
   const [shippingCost] = useState(50); // Fixed shipping cost
   const [isGift, setIsGift] = useState(false);
   const [giftMessage, setGiftMessage] = useState('');
+
+  console.log("console cart items",cartItems);
 
   const exchangeRate = 3.75;
 

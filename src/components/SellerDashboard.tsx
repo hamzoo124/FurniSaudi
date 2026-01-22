@@ -24,6 +24,7 @@ import { useContracts } from "../hooks/useContracts";
 // Import all components
 import DashboardOverview from "./DashboardOverview";
 import Products from "./Products";
+import SellerApproval from "./SellerApproval ";
 import Orders from "./Orders";
 import Inventory from "./Inventory";
 import CustomOrders from "./CustomOrders";
@@ -71,6 +72,8 @@ import {
   User,
   AlertCircle,
   Shield,
+  BadgeCheck,
+  UserCheck,
 } from "lucide-react";
 
 interface SellerDashboardProps {
@@ -84,6 +87,7 @@ const SellerDashboard: React.FC<SellerDashboardProps> = ({
 }) => {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
+const [openMenu, setOpenMenu] = useState<string | null>(null);
 
   const [activeSection, setActiveSection] = useState(propSection);
   const [searchQuery, setSearchQuery] = useState("");
@@ -100,13 +104,12 @@ const SellerDashboard: React.FC<SellerDashboardProps> = ({
 
   const sallerId = user?.id || "";
   useEffect(() => {
-    console.log("Fetched seller ID:", sallerId);    
+    console.log("Fetched seller ID:", sallerId);
   }, [sallerId]);
-
 
   // Initialize all hooks - FIXED: No parameters needed
   const dashboard = useDashboard();
-  const products = useProducts();
+  const products = useProducts(); // Placeholder for SellerApproval hook/component
   const orders = useOrders();
   const inventory = useInventory();
   const customOrders = useCustomOrders();
@@ -136,6 +139,10 @@ const SellerDashboard: React.FC<SellerDashboardProps> = ({
     }
   }, [user]);
 
+
+ 
+
+
   // Navigation items with hooks - FIXED: Proper hook references
   const navItems = useMemo(
     () => [
@@ -146,6 +153,64 @@ const SellerDashboard: React.FC<SellerDashboardProps> = ({
         hook: dashboard,
         badge: 0,
       },
+      {
+  id: "users",
+  icon: UserCheck,
+  label: "Users",
+  badge: 0,
+  children: [
+    {
+      id: "user-seller",
+      label: "Seller",
+      children: [
+        {
+          id: "seller-approval",
+          label: "Seller Approval",
+        },
+        {
+          id: "seller-products",
+          label: "Seller Products",
+        },
+      ],
+    },
+    {
+      id: "user-buyer",
+      label: "Buyer",
+      children: [
+        {
+          id: "buyer-orders",
+          label: "Buyer Orders",
+        },
+        {
+          id: "buyer-reviews",
+          label: "Buyer Reviews",
+        },
+      ],
+    },
+    {
+      id: "user-admin",
+      label: "Admin",
+      children: [
+        {
+          id: "admin-users",
+          label: "User Management",
+        },
+        {
+          id: "admin-reports",
+          label: "Reports",
+        },
+      ],
+    },
+  ],
+},
+
+      {
+        id: "SellerApproval",
+        icon: BadgeCheck,
+        label: "SellerApproval",
+        badge: 0,
+      },
+
       {
         id: "products",
         icon: Package,
@@ -271,6 +336,7 @@ const SellerDashboard: React.FC<SellerDashboardProps> = ({
     ],
     [
       dashboard,
+      SellerApproval,
       products,
       orders,
       inventory,
@@ -356,10 +422,26 @@ const SellerDashboard: React.FC<SellerDashboardProps> = ({
       console.error("Logout error:", error);
     }
   };
+// Recursive search function to find nav item by ID
+const findNavItemById = (id: string, items: typeof navItems): any => {
+  for (const item of items) {
+    if (item.id === id) return item;
+    if (item.children) {
+      const found = findNavItemById(id, item.children);
+      if (found) return found;
+    }
+  }
+  return null;
+};
 
+  // const getCurrentHook = useCallback(() => {
+  //   return navItems.find((item) => item.id === activeSection)?.hook;
+  // }, [activeSection, navItems]);
   const getCurrentHook = useCallback(() => {
-    return navItems.find((item) => item.id === activeSection)?.hook;
-  }, [activeSection, navItems]);
+  const item = findNavItemById(activeSection, navItems);
+  return item?.hook;
+}, [activeSection, navItems]);
+
 
   // FIXED: Better render logic with demo mode handling
   const renderContent = useCallback(() => {
@@ -367,10 +449,10 @@ const SellerDashboard: React.FC<SellerDashboardProps> = ({
     const isLoading = currentHook?.loading || false;
     const hasError = currentHook?.error;
 
-    console.log("Rendering section:", activeSection);
-    console.log("Loading state:", isLoading);
-    console.log("Error state:", hasError);
-    console.log("Demo mode:", isDemoMode);
+    // console.log("Rendering section:", activeSection);
+    // console.log("Loading state:", isLoading);
+    // console.log("Error state:", hasError);
+    // console.log("Demo mode:", isDemoMode);
 
     // Show loading only if not demo mode
     if (isLoading && !isDemoMode) {
@@ -465,12 +547,17 @@ const SellerDashboard: React.FC<SellerDashboardProps> = ({
             onMetricClick={(metric) => {
               console.log("Metric clicked:", metric);
               switch (metric) {
+                case "SellerApproval":
+                  handleSectionClick("SellerApproval");
+                  break;
                 case "products":
                   handleSectionClick("products");
                   break;
+
                 case "orders":
                   handleSectionClick("orders");
                   break;
+                
                 case "finance":
                   handleSectionClick("finance");
                   break;
@@ -486,6 +573,8 @@ const SellerDashboard: React.FC<SellerDashboardProps> = ({
             }}
           />
         );
+        case "SellerApproval":
+    return <SellerApproval />;
       case "products":
         return (
           <Products
@@ -694,6 +783,7 @@ const SellerDashboard: React.FC<SellerDashboardProps> = ({
     handleAddNewProduct,
     viewMode,
     dashboard.stats,
+    SellerApproval,
     products,
     orders,
     inventory,
@@ -928,13 +1018,13 @@ const SellerDashboard: React.FC<SellerDashboardProps> = ({
                     ? "Add Product"
                     : activeSection.replace("-", " ")}
               </h1>
-              <p className="text-sm text-gray-500 mt-1">
+              {/* <p className="text-sm text-gray-500 mt-1">
                 {isDemoMode
                   ? "Demo Mode - Showing sample data"
                   : activeSection === "dashboard"
                     ? "Overview of your store performance and analytics"
                     : `Manage your ${activeSection.replace("-", " ")}`}
-              </p>
+              </p> */}
             </div>
 
             <div className="flex items-center gap-2">

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useParams, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useParams, useLocation, BrowserRouter } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
@@ -57,6 +57,10 @@ import {
 // Import Supabase client
 import { supabase } from "./lib/supabase";
 import WalletPage from "./pages/admin/wallet";
+import SellersPage from "./components/AdminPages/SellersPage";
+import BuyersPage from "./components/AdminPages/BuyersPage";
+import AdminsPage from "./components/AdminPages/AdminsPage";
+import { TooltipProvider } from "./components/ui/tooltip";
 
 // Create React Query client
 const queryClient = new QueryClient({
@@ -367,13 +371,11 @@ const AdminNavSidebar: React.FC<{
 // ================================
 // SIMPLE CART COMPONENT (FIXED VERSION)
 // ================================
-const SimpleCartPage: React.FC<{
-  onNavigate: (page: string, data?: any) => void;
+const SimpleCartPage: React.FC<{ onNavigate: (page: string, data?: any) => void;
   cartItems: any[];
   onUpdateQuantity: (index: number, quantity: number) => void;
   onRemoveItem: (index: number) => void;
-  onClearCart: () => void;
-}> = ({ onNavigate, cartItems, onUpdateQuantity, onRemoveItem, onClearCart }) => {
+  onClearCart: () => void}> = ({ onNavigate, cartItems, onUpdateQuantity, onRemoveItem, onClearCart }) => {
   const calculateTotal = () => {
     return cartItems.reduce((total, item) => {
       const itemPrice = item.product.finalPrice || item.product.price;
@@ -649,7 +651,7 @@ const SellerDashboardWrapper = () => {
       
       // Map to supported sections (including new ones)
       const validSections = [
-        'dashboard', 'products', 'orders', 'inventory', 'custom-orders',
+        'dashboard', 'products',  'orders', 'inventory', 'custom-orders',
         'shipping', 'finance', 'reports', 'reviews', 'advertising',
         'wallet', 'vat', 'profile', 'settings', 'notifications', 'support'
       ];
@@ -894,6 +896,8 @@ const NewAdminDashboardWrapper = () => {
     if (path === '/admin/analytics') return 'analytics';
     if (path === '/admin/settings') return 'settings';
     if (path === '/admin/categories') return 'categories';
+    // if (path === '/admin/buyers') return 'buyers';
+
     return 'dashboard';
   };
 
@@ -1178,7 +1182,7 @@ function AppContent() {
       onClearCart={() => setCartItems([])}
       />
     );
-    console.log("cartitemssssssssssssss",cartItems);
+  
 
   const CheckoutPageWrapper = () => {
     useEffect(() => {
@@ -1201,6 +1205,7 @@ function AppContent() {
       />
     );
   };
+  
 
   const EditProductWrapper = () => {
     const { productId } = useParams();
@@ -1397,6 +1402,10 @@ function AppContent() {
         <Route path="/admin/activity" element={<NewAdminDashboardWrapper />} />
         <Route path="/admin/analytics" element={<NewAdminDashboardWrapper />} />
         <Route path="/admin/settings" element={<NewAdminDashboardWrapper />} />
+         <Route path="/admin/sellers" element={<SellersPage />} />
+          <Route path="/admin/buyers" element={<BuyersPage />} />
+          <Route path="/admins" element={<AdminsPage />} />
+          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         
         {/* STANDALONE ADMIN SETTINGS ROUTE */}
         <Route path="/admin/settings/standalone" element={<SettingsPageWrapper />} />
@@ -1407,6 +1416,12 @@ function AppContent() {
     </div>
   );
 }
+
+
+
+
+
+ 
 
 // ================================
 // MAIN APP COMPONENT

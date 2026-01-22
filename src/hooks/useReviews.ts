@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { supabase } from '@/lib/supabase';
+import { supabase } from  '../lib/supabase';
 import { toast } from 'react-hot-toast';
 
 // ==================== TYPE DEFINITIONS ====================
@@ -90,10 +90,19 @@ export interface PaginatedReviewsResponse {
   totalPages: number;
   hasMore: boolean;
 }
+export interface ReviewStats {
+  total: number;        // total reviews
+  pending: number;      // reviews without response
+  approved: number;     // reviews with response and not reported
+  reported: number;     // reviews marked as reported
+}
+
 
 export interface UseReviewsReturn {
   reviews: Review[];
   loading: boolean;
+    pendingReviews: Review[];      // <-- add this
+  reviewStats: ReviewStats;   
   error: string | null;
   total: number;
   page: number;
@@ -292,9 +301,20 @@ export const useReviews = (
 
   const hasMore = reviews.length < total;
   const totalPages = Math.ceil(total / limit);
+const pendingReviews: Review[] = reviews.filter(
+  r => !r.seller_response && !r.is_reported
+);
 
-  return {
+const reviewStats: ReviewStats = {
+  total: reviews.length,
+  pending: pendingReviews.length,
+  approved: reviews.filter(r => r.seller_response && !r.is_reported).length,
+  reported: reviews.filter(r => r.is_reported).length
+};
+   return {
     reviews,
+    pendingReviews,
+    reviewStats,
     loading,
     error,
     total,

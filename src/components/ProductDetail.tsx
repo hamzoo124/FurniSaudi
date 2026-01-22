@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabase.client';
+import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import {
   ArrowLeft, ShoppingCart, Star, MapPin, Truck, Shield, Package,
@@ -2532,3 +2532,4 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({
     </div>
   );
 };
+

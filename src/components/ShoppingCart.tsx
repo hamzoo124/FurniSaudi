@@ -1,7 +1,8 @@
 // components/ShoppingCart.tsx (Fixed)
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, Trash2, Plus, Minus, ShoppingBag, CreditCard, Check, Tag, Truck, Shield } from 'lucide-react';
-import { supabase } from '../lib/supabase.client';
+// import { supabase } from '../lib/supabase.client';
+import { supabase } from '../lib/supabase';
 
 import { useAuth } from '../contexts/AuthContext';
 
