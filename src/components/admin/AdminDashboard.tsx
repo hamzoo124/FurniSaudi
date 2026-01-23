@@ -1861,7 +1861,7 @@ const setFilterOpen = (open: boolean) => {
     <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
       {/* Left: Title */}
       <div>
-        <h2 className="text-3xl font-extrabold text-gray-900">
+        <h2 className="text-2xl font-bold text-gray-900">
           Dashboard Overview
         </h2>
         <p className="text-sm font-medium text-gray-600 mt-1">
@@ -4370,7 +4370,7 @@ const setFilterOpen = (open: boolean) => {
                 <Shield className="w-4 h-4 text-white" />
               </div>
               <div className=" ">
-                <h1 className="text-2xl  font-bold text-gray-900">
+                <h1 className="text-2xl font-bold text-gray-900">
                  Admin Central
                 </h1>
                 <p className="text-xs font-bold text-gray-500">Premium Furniture</p>
@@ -4442,7 +4442,9 @@ const setFilterOpen = (open: boolean) => {
           </div>
         )}
 
-        <div className="flex-1 flex bg-gray-100 flex-col overflow-hidden">
+        {/* mainbody */}
+
+        <div className="flex-1 flex bg-gray-100 flex-col overflow-hidden m-0">
           <div className="bg-white border-b border-gray-200 lg:hidden">
             <div className="flex items-center justify-between p-3">
               <div className="flex items-center space-x-2">
@@ -4486,8 +4488,8 @@ const setFilterOpen = (open: boolean) => {
             </div>
           </div>
 
-          <div className="flex-1 overflow-auto p-4 md:p-6">
-            <div className="hidden lg:flex items-center justify-end mb-6">
+          <div className="flex-1 overflow-auto py-2 px-6 mt-2  ">
+            {/* <div className="hidden lg:flex items-center justify-end mb-6"> */}
               {/* <div>
                 <h1 className="text-2xl font-bold text-gray-900 capitalize">
                   {activeSection === "dashboard"
@@ -4547,7 +4549,7 @@ const setFilterOpen = (open: boolean) => {
                   </div>
                 </div>
               </div> */}
-            </div>
+            {/* </div> */}
 
             {isLoading && activeSection === "dashboard" ? (
               <div className="flex items-center justify-center py-12">
