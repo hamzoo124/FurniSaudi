@@ -45,9 +45,9 @@ import {
   Lock,
   Unlock
 } from "lucide-react";
-import { supabase } from "@/lib/supabase";
-import { sellersApi, getSellerByUserId } from "@/lib/supabase/sellers";
-import AdminLayout from "@/components/admin/AdminLayout";
+import { supabase } from "../..//lib/supabase";
+// import { sellersApi, getSellerByUserId } from "@/lib/supabase/sellers";
+// import AdminLayout from "../..//components/admin/AdminLayout";
 
 interface User {
   id: string;
@@ -572,7 +572,7 @@ const UsersPage: React.FC = () => {
   };
 
   return (
-    <AdminLayout>
+    // <AdminLayout>
       <div className="p-6">
         {/* Header */}
         <div className="mb-8">
@@ -1069,7 +1069,7 @@ const UsersPage: React.FC = () => {
           </div>
         )}
       </div>
-    </AdminLayout>
+    //  </AdminLayout> 
   );
 };
 

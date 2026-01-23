@@ -111,19 +111,19 @@ export default function AdminsPage() {
   };
 
   return (
-    <div className="p-4 sm:p-8">
+    <div className="p-4 sm:p-8 ">
       {/* Page Header */}
-      <UserPageHeader
+      {/* <UserPageHeader
         title="Unified User Management Hub"
         description="Manage sellers, buyers, and administrative staff across the platform."
         searchPlaceholder="Search admins, ID, or email..."
         searchValue={searchValue}
         onSearchChange={setSearchValue}
         onFilterClick={() => setFilterOpen(true)}
-      />
+      /> */}
 
       {/* Tabs */}
-      <UserTabs />
+      {/* <UserTabs /> */}
 
       {/* Admin Section */}
       <section className="mt-6">
@@ -245,7 +245,7 @@ export default function AdminsPage() {
         </div>
 
         {/* Admin Table */}
-        <div className="dashboard-box overflow-x-auto rounded-lg border border-border">
+        <div className="dashboard-box overflow-x-auto bg-white rounded-lg border border-border">
           <table className="w-full min-w-[700px] text-left">
             <thead className="bg-muted border-b border-border text-[11px] font-bold text-muted-foreground uppercase">
               <tr>

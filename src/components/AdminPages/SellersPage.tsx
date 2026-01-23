@@ -118,9 +118,9 @@ export default function SellersPage() {
   };
 
   return (
-  <div className="p-4 sm:p-8 bg-gray-50 min-h-screen">
+  <div className="p-4 sm:p-8 min-h-screen ">
 
-      <UserPageHeader
+      {/* <UserPageHeader
         title="Unified User Management Hub"
         description="Manage sellers, buyers, and administrative staff across the platform."
         searchPlaceholder="Search sellers, ID, or email..."
@@ -129,7 +129,7 @@ export default function SellersPage() {
         onFilterClick={() => setFilterOpen(true)}
       />
 
-      <UserTabs />
+      <UserTabs /> */}
 
       {/* Pending Seller Approval */}
      <section className="mb-10">

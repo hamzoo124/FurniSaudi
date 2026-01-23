@@ -1,6 +1,6 @@
 // components/admin/categories/CategoryForm.tsx
 import React, { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '../..//lib/supabase';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 
@@ -530,7 +530,7 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-4">
+    <div className="max-w-4xl mx-auto p-4 bg-gray-100">
       <div className="mb-6">
         <BackButton />
         <div className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">

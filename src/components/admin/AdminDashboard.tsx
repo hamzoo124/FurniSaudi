@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import AdminsPage from "../../components/AdminPages/AdminsPage"
 import UserpageTabs from "../users/UserpageTabs";
+
+
 import {
   Home,
   Users,
@@ -78,6 +80,7 @@ import {
   Save,
   User,
   ChevronDown,
+  BarChart3,
 } from "lucide-react";
 
 // Import Hooks
@@ -100,6 +103,7 @@ import ProtectedRoute from "../ProtectedRoute";
 import { render } from "react-dom";
 import BuyersPage from "../AdminPages/BuyersPage";
 import UsersPage from "../users/UserpageTabs";
+import UserManagementWrapper from "./dashboard/UserManagementWrapper";
 
 interface AdminDashboardProps {
   onNavigate?: (page: string) => void;
@@ -1849,236 +1853,204 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
     const userName = currentUser?.user_metadata?.full_name || "Admin";
 
     return (
-      <div className="space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <h2 className="text-xl font-semibold text-gray-900">
-              Dashboard Overview
-            </h2>
-            <p className="text-sm text-gray-600 mt-1">
-              Welcome back, {userName}
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <ActionButton
-              icon={RefreshCw}
-              label="Refresh"
-              variant="secondary"
-              onClick={refreshAllData}
-              disabled={dashboardLoading}
-            />
-          </div>
+  <div className="space-y-8 min-h-screen">
+    {/* Header */}
+    <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+      {/* Left: Title */}
+      <div>
+        <h2 className="text-3xl font-extrabold text-gray-900">
+          Dashboard Overview
+        </h2>
+        <p className="text-sm font-medium text-gray-600 mt-1">
+          Welcome back, {userName || "Hamza"}
+        </p>
+      </div>
+
+      {/* Right: Search + Filter */}
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full lg:w-auto">
+        {/* Search */}
+        <div className="relative w-full sm:w-64">
+          <input
+            type="text"
+            placeholder="Search users, orders..."
+            className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400
+                       focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
         </div>
 
-        {/* Metrics Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-          <MetricCard
-            title="Total Users"
-            value={metrics?.totalUsers || 0}
-            icon={Users}
-            color="primary"
-            loading={dashboardLoading}
-            onClick={() => handleSectionClick("sellers")}
-          />
-          <MetricCard
-            title="Active Sellers"
-            value={
-              metrics?.totalSellers ||
-              (sellerApplications
-                ? sellerApplications.filter(
-                    (app: SellerApplication) => app.status === "approved",
-                  ).length
-                : 0)
-            }
-            icon={UserCheck}
-            color="success"
-            loading={dashboardLoading}
-            onClick={() => handleSectionClick("sellers")}
-          />
-          <MetricCard
-            title="Total Products"
-            value={metrics?.totalProducts || (products ? products.length : 0)}
-            icon={Package}
-            color="accent"
-            loading={dashboardLoading}
-            onClick={() => handleSectionClick("products")}
-          />
-          <MetricCard
-            title="Total Orders"
-            value={metrics?.totalOrders || (orders ? orders.length : 0)}
-            icon={ShoppingBag}
-            color="info"
-            loading={dashboardLoading}
+        {/* Filter */}
+        <button
+          onClick={() => setFilterOpen(true)}
+          className="inline-flex items-center bg-yellow-400 justify-center gap-2 px-3 py-2 text-sm font-semibold
+                     border border-gray-300 rounded-lg bg-white text-gray-700
+                     hover:bg-gray-50"
+        >
+          <Filter className="w-4 h-4 " />
+          Filters
+        </button>
+      </div>
+    </div>
+
+    {/* Metrics Grid */}
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+      {[
+        {
+          title: "Total Users",
+          value: 120,
+          icon: Users,
+          click: () => handleSectionClick("sellers"),
+        },
+        {
+          title: "Active Sellers",
+          value: 30,
+          icon: UserCheck,
+          click: () => handleSectionClick("sellers"),
+        },
+        {
+          title: "Total Products",
+          value: 450,
+          icon: Package,
+          click: () => handleSectionClick("products"),
+        },
+        {
+          title: "Total Orders",
+          value: 75,
+          icon: ShoppingBag,
+          click: () => handleSectionClick("orders"),
+        },
+        {
+          title: "Pending Payments",
+          value: 5,
+          icon: CreditCard,
+          click: () => handleSectionClick("finance"),
+        },
+      ].map((item, i) => (
+        <div
+          key={i}
+          onClick={item.click}
+          className="bg-white border border-gray-200 rounded-xl p-4 cursor-pointer hover:shadow-sm transition"
+        >
+          <div className="flex items-center gap-3">
+            <div className="p-3 rounded-lg bg-gray-100">
+              <item.icon className="w-5 h-5 text-gray-700" />
+            </div>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                {item.title}
+              </p>
+              <p className="text-xl font-bold text-gray-900">
+                {item.value}
+              </p>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    {/* Metric Cards */}
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <MetricCard
+        title="Total Revenue"
+        value="$12,000"
+        icon={DollarSign}
+        color="success"
+        loading={false}
+      />
+      <MetricCard
+        title="Pending Approvals"
+        value={1}
+        icon={AlertCircle}
+        color="warning"
+        loading={false}
+        onClick={() => handleSectionClick("sellers")}
+      />
+      <MetricCard
+        title="Approved Applications"
+        value={1}
+        icon={CheckCircle}
+        color="success"
+        loading={false}
+        onClick={() => handleSectionClick("sellers")}
+      />
+      <MetricCard
+        title="Rejected Applications"
+        value={1}
+        icon={UserX}
+        color="danger"
+        loading={false}
+        onClick={() => handleSectionClick("sellers")}
+      />
+    </div>
+
+    {/* Recent Orders & Activity */}
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="bg-white border border-gray-200 rounded-xl p-4">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-sm font-bold text-gray-900">Recent Orders</h3>
+          <button
             onClick={() => handleSectionClick("orders")}
-          />
-          <MetricCard
-            title="Pending Payments"
-            value={metrics?.pendingPayments || 0}
-            icon={CreditCard}
-            color="warning"
-            loading={dashboardLoading}
-            onClick={() => handleSectionClick("finance")}
-          />
+            className="text-xs font-semibold text-blue-600 hover:underline flex items-center gap-1"
+          >
+            View All <ChevronRight className="w-3 h-3" />
+          </button>
         </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <MetricCard
-            title="Total Revenue"
-            value={formatCurrency(metrics?.totalRevenue || 0)}
-            icon={DollarSign}
-            color="success"
-            loading={dashboardLoading}
-          />
-          <MetricCard
-            title="Pending Approvals"
-            value={
-              sellerApplications
-                ? sellerApplications.filter(
-                    (app: SellerApplication) => app.status === "pending",
-                  ).length
-                : 0
-            }
-            icon={AlertCircle}
-            color="warning"
-            loading={sellersLoading}
-            onClick={() => handleSectionClick("sellers")}
-          />
-          <MetricCard
-            title="Approved Applications"
-            value={
-              sellerApplications
-                ? sellerApplications.filter(
-                    (app: SellerApplication) => app.status === "approved",
-                  ).length
-                : 0
-            }
-            icon={CheckCircle}
-            color="success"
-            loading={sellersLoading}
-            onClick={() => handleSectionClick("sellers")}
-          />
-          <MetricCard
-            title="Rejected Applications"
-            value={
-              sellerApplications
-                ? sellerApplications.filter(
-                    (app: SellerApplication) => app.status === "rejected",
-                  ).length
-                : 0
-            }
-            icon={UserX}
-            color="danger"
-            loading={sellersLoading}
-            onClick={() => handleSectionClick("sellers")}
-          />
-        </div>
-
-        {/* Recent Orders & Activity */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-white border border-gray-200 rounded-xl p-4">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-semibold text-gray-900">
-                Recent Orders
-              </h3>
-              <button
-                onClick={() => handleSectionClick("orders")}
-                className="text-xs text-gray-600 hover:text-gray-900 font-medium flex items-center gap-1"
-              >
-                View All <ChevronRight className="w-3 h-3" />
-              </button>
+        <div className="space-y-3">
+          {[
+            { id: "1", order_number: "A1001", created_at: "2026-01-23", total_amount: 150, status: "completed" },
+            { id: "2", order_number: "A1002", created_at: "2026-01-22", total_amount: 200, status: "pending" },
+          ].map((order) => (
+            <div
+              key={order.id}
+              className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition-colors"
+            >
+              <div>
+                <p className="font-medium text-gray-900 text-sm">#{order.order_number}</p>
+                <p className="text-xs text-gray-500">
+                  {order.created_at} • ${order.total_amount}
+                </p>
+              </div>
+              <StatusBadge status={order.status} />
             </div>
-            <div className="space-y-3">
-              {recentOrders && recentOrders.length > 0
-                ? recentOrders.slice(0, 5).map((order: any) => (
-                    <div
-                      key={order.id}
-                      className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition-colors"
-                    >
-                      <div>
-                        <p className="font-medium text-gray-900 text-sm">
-                          #{order.order_number || order.id.substring(0, 8)}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          {formatDate(order.created_at)} •{" "}
-                          {formatCurrency(order.total_amount || 0)}
-                        </p>
-                      </div>
-                      <StatusBadge status={order.status || "pending"} />
-                    </div>
-                  ))
-                : !ordersLoading && (
-                    <div className="text-center py-6">
-                      <ShoppingBag className="w-8 h-8 text-gray-300 mx-auto mb-2" />
-                      <p className="text-gray-500 text-sm">No recent orders</p>
-                    </div>
-                  )}
-              {ordersLoading && (
-                <div className="space-y-3">
-                  {[1, 2, 3].map((i) => (
-                    <div key={i} className="animate-pulse">
-                      <div className="h-12 bg-gray-200 rounded-lg"></div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-
-          <div className="bg-white border border-gray-200 rounded-xl p-4">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-semibold text-gray-900">
-                Recent Activity
-              </h3>
-              <button
-                onClick={() => handleSectionClick("activity")}
-                className="text-xs text-gray-600 hover:text-gray-900 font-medium flex items-center gap-1"
-              >
-                View All <ChevronRight className="w-3 h-3" />
-              </button>
-            </div>
-            <div className="space-y-3">
-              {logs && logs.length > 0
-                ? logs.slice(0, 5).map((log: any) => (
-                    <div
-                      key={log.id}
-                      className="flex items-start space-x-3 p-3 hover:bg-gray-50 rounded-lg transition-colors"
-                    >
-                      <div className="p-2 bg-gray-100 rounded-lg">
-                        <Activity className="w-4 h-4 text-gray-700" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="font-medium text-gray-900 text-sm capitalize truncate">
-                          {log.action?.replace(/_/g, " ")}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          {log.target_type} • {formatDate(log.created_at)}{" "}
-                          {formatTime(log.created_at)}
-                        </p>
-                      </div>
-                    </div>
-                  ))
-                : !logsLoading && (
-                    <div className="text-center py-6">
-                      <Activity className="w-8 h-8 text-gray-300 mx-auto mb-2" />
-                      <p className="text-gray-500 text-sm">
-                        No recent activity
-                      </p>
-                    </div>
-                  )}
-              {logsLoading && (
-                <div className="space-y-3">
-                  {[1, 2, 3].map((i) => (
-                    <div key={i} className="animate-pulse">
-                      <div className="h-12 bg-gray-200 rounded-lg"></div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
+          ))}
         </div>
       </div>
-    );
+
+      <div className="bg-white border border-gray-200 rounded-xl p-4">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-sm font-semibold text-gray-900">Recent Activity</h3>
+          <button
+            onClick={() => handleSectionClick("activity")}
+            className="text-xs text-gray-600 hover:text-gray-900 font-medium flex items-center gap-1"
+          >
+            View All <ChevronRight className="w-3 h-3" />
+          </button>
+        </div>
+        <div className="space-y-3">
+          {[
+            { id: "1", action: "user_login", target_type: "User", created_at: "2026-01-23" },
+            { id: "2", action: "order_created", target_type: "Order", created_at: "2026-01-22" },
+          ].map((log) => (
+            <div
+              key={log.id}
+              className="flex items-start space-x-3 p-3 hover:bg-gray-50 rounded-lg transition-colors"
+            >
+              <div className="p-2 bg-gray-100 rounded-lg">
+                <Activity className="w-4 h-4 text-gray-700" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="font-medium text-gray-900 text-sm capitalize truncate">
+                  {log.action.replace(/_/g, " ")}
+                </p>
+                <p className="text-xs text-gray-500">{log.target_type} • {log.created_at}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
   };
 
   // Sellers Section
@@ -3350,7 +3322,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const renderReviews = () => {
     return (
       <div className="space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 ">
           <div>
             <h2 className="text-xl font-semibold text-gray-900">
               Reviews Management
@@ -3454,124 +3426,222 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
   // Finance Section
   const renderFinance = () => {
-    return (
-      <div className="space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <h2 className="text-xl font-semibold text-gray-900">
-              Finance Management
-            </h2>
-            <p className="text-sm text-gray-600 mt-1">
-              Manage platform finances, payouts, and revenue
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <ActionButton
-              icon={RefreshCw}
-              label="Refresh"
-              variant="secondary"
-              onClick={() => refreshFinance()}
-              disabled={financeLoading}
-            />
-          </div>
+   return (
+  <div className="bg-gray-100 min-h-screen p-6">
+    <div className="space-y-6 max-w-7xl mx-auto">
+      {/* Header */}
+     <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+  <div>
+    <h2 className="text-2xl font-bold text-gray-900">
+      Finance Management
+    </h2>
+    <p className="text-sm text-gray-600 mt-1">
+      Complete financial control and revenue management system
+    </p>
+  </div>
+
+  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full lg:w-auto">
+    {/* Search */}
+    <div className="relative w-full sm:w-64">
+      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+      <input
+        type="text"
+        placeholder="Search transactions..."
+        className="w-full pl-9 pr-3 py-2 text-sm rounded-lg border border-gray-300 focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 outline-none"
+      />
+    </div>
+
+    {/* Filter */}
+    <button className="flex items-center gap-2 px-3 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50">
+      {/* <SlidersHorizontal className="h-4 w-4" /> */}
+      Filters
+    </button>
+
+    {/* Generate Report */}
+    <button className="flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg bg-yellow-400 text-black hover:bg-yellow-400">
+      Generate Report
+    </button>
+  </div>
+</div>
+
+<div className="bg-white border border-gray-200 rounded-xl p-4">
+  <h3 className="text-sm font-semibold text-gray-900 mb-4">
+    Revenue Management
+  </h3>
+
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    {/* Total Revenue */}
+    <div className="  rounded-lg p-4">
+      <p className="text-sm text-gray-500">Total Revenue</p>
+      <p className="text-2xl font-bold text-gray-900 mt-1">$542,890</p>
+      <p className="text-xs text-green-600 mt-2 flex items-center gap-1">
+        <TrendingUp className="h-4 w-4" /> +12.5% this month
+      </p>
+    </div>
+
+    {/* Platform Commission */}
+    <div className="  rounded-lg p-4">
+      <p className="text-sm text-gray-500">Platform Commission</p>
+      <p className="text-2xl font-bold text-gray-900 mt-1">$54,289</p>
+      <p className="text-xs text-gray-500 mt-2">10% of total revenue</p>
+    </div>
+
+    {/* Seller Earnings */}
+    <div className=" rounded-lg p-4">
+      <p className="text-sm text-gray-500">Seller Earnings</p>
+      <p className="text-2xl font-bold text-gray-900 mt-1">$488,601</p>
+      <p className="text-xs text-gray-500 mt-2">90% paid to sellers</p>
+    </div>
+
+    {/* Top Category */}
+    <div className=" rounded-lg p-4">
+      <p className="text-sm text-gray-500">Top Category</p>
+      <p className="text-lg font-semibold text-gray-900 mt-1">Sofas</p>
+      <p className="text-xs text-gray-500 mt-2">$124,500 revenue</p>
+    </div>
+  </div>
+</div>
+
+
+
+      {/* Stats Cards */}
+ <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+  {[
+    {
+      icon: Receipt,
+      title: "Refunds & Cancellations",
+      subtitle: "Manage returns",
+      accent: "yellow",
+      stats: [
+        { label: "Pending Refunds", value: "8 Urgent", color: "text-yellow-600" },
+        { label: "Total Refunded", value: "$12,450", color: "text-red-600" },
+        { label: "Refund Rate", value: "2.4%", color: "text-blue-600" },
+      ],
+    },
+    {
+      icon: FileText,
+      title: "Invoices & Billing",
+      subtitle: "Invoice management",
+      accent: "blue",
+      stats: [
+        { label: "Generated Today", value: "42", color: "text-green-600" },
+        { label: "Pending Approval", value: "12", color: "text-yellow-600" },
+        { label: "Tax Invoices", value: "1,089", color: "text-blue-600" },
+      ],
+    },
+    {
+      icon: Wallet,
+      title: "Wallet & Ledger",
+      subtitle: "Balance tracking",
+      accent: "green",
+      stats: [
+        { label: "Platform Wallet", value: "$86,450", color: "text-green-700" },
+        { label: "Seller Wallets", value: "$124,890", color: "text-blue-600" },
+        { label: "Transactions Today", value: "142", color: "text-gray-700" },
+      ],
+    },
+    {
+      icon: BarChart3,
+      title: "Financial Reports",
+      subtitle: "Analytics & insights",
+      accent: "blue",
+      stats: [
+        { label: "P&L Reports", value: "Updated Today", color: "text-green-600" },
+        { label: "Seller Reports", value: "24 Ready", color: "text-blue-600" },
+        { label: "Export Formats", value: "PDF / Excel", color: "text-gray-700" },
+      ],
+    },
+    {
+      icon: ShieldAlert,
+      title: "Fraud & Risk Control",
+      subtitle: "Security monitoring",
+      accent: "yellow",
+      stats: [
+        { label: "Suspicious Activity", value: "3 Flags", color: "text-red-600" },
+        { label: "Manual Reviews", value: "8", color: "text-yellow-600" },
+        { label: "Risk Score", value: "Low", color: "text-green-600" },
+      ],
+    },
+    {
+      icon: Settings,
+      title: "Admin Controls",
+      subtitle: "System configuration",
+      accent: "gray",
+      stats: [
+        { label: "Payout Threshold", value: "$100", color: "text-gray-900" },
+        { label: "Payout Cycle", value: "Bi-weekly", color: "text-blue-600" },
+        { label: "Active Currencies", value: "Multi", color: "text-green-600" },
+      ],
+    },
+  ].map((item, idx) => (
+    <div
+      key={idx}
+      className="bg-white border border-gray-200 rounded-2xl p-5 hover:shadow-md transition"
+    >
+      {/* Header */}
+      <div className="flex items-center gap-4 mb-4">
+        <div
+          className={`
+            p-3 rounded-xl
+            ${item.accent === "yellow" && "bg-yellow-100"}
+            ${item.accent === "green" && "bg-green-100"}
+            ${item.accent === "blue" && "bg-blue-100"}
+            ${item.accent === "gray" && "bg-gray-100"}
+          `}
+        >
+          <item.icon className="h-6 w-6 text-gray-800" />
         </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-white border border-green-200 rounded-xl p-4">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 bg-green-100 rounded-lg">
-                <DollarSign className="w-5 h-5 text-green-600" />
-              </div>
-              <div>
-                <p className="text-sm text-gray-600">Total Revenue</p>
-                <p className="text-xl font-bold text-gray-900">
-                  {formatCurrency(financeData?.totalRevenue || 0)}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white border border-blue-200 rounded-xl p-4">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <CreditCard className="w-5 h-5 text-blue-600" />
-              </div>
-              <div>
-                <p className="text-sm text-gray-600">Pending Payouts</p>
-                <p className="text-xl font-bold text-gray-900">
-                  {formatCurrency(financeData?.pendingPayouts || 0)}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white border border-purple-200 rounded-xl p-4">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 bg-purple-100 rounded-lg">
-                <Wallet className="w-5 h-5 text-purple-600" />
-              </div>
-              <div>
-                <p className="text-sm text-gray-600">Platform Commission</p>
-                <p className="text-xl font-bold text-gray-900">
-                  {formatCurrency(financeData?.platformCommission || 0)}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
-          <div className="p-4 border-b border-gray-200">
-            <h3 className="text-sm font-semibold text-gray-900">
-              Recent Transactions
-            </h3>
-          </div>
-          <div className="p-4">
-            {financeLoading ? (
-              <div className="space-y-3">
-                {[1, 2, 3].map((i) => (
-                  <div key={i} className="animate-pulse">
-                    <div className="h-12 bg-gray-200 rounded-lg"></div>
-                  </div>
-                ))}
-              </div>
-            ) : financeData?.transactions &&
-              financeData.transactions.length > 0 ? (
-              <div className="space-y-3">
-                {financeData.transactions
-                  .slice(0, 5)
-                  .map((transaction: any) => (
-                    <div
-                      key={transaction.id}
-                      className="flex items-center justify-between p-3 border border-gray-200 rounded-lg"
-                    >
-                      <div>
-                        <p className="font-medium text-gray-900">
-                          {transaction.description}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          {formatDate(transaction.created_at)}
-                        </p>
-                      </div>
-                      <div
-                        className={`font-bold ${transaction.amount >= 0 ? "text-green-600" : "text-red-600"}`}
-                      >
-                        {transaction.amount >= 0 ? "+" : ""}
-                        {formatCurrency(transaction.amount)}
-                      </div>
-                    </div>
-                  ))}
-              </div>
-            ) : (
-              <div className="text-center py-8">
-                <CreditCard className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                <p className="text-gray-500">No transactions found</p>
-              </div>
-            )}
-          </div>
+        <div>
+          <p className="text-base font-bold text-gray-900">
+            {item.title}
+          </p>
+          <p className="text-xs text-gray-500 font-medium">
+            {item.subtitle}
+          </p>
         </div>
       </div>
-    );
+
+      {/* Stats */}
+      <div className="space-y-2">
+        {item.stats.map((stat, i) => (
+          <div
+            key={i}
+            className="flex items-center justify-between text-sm"
+          >
+            <span className="text-gray-600 font-medium">
+              {stat.label}
+            </span>
+            <span className={`font-bold ${stat.color}`}>
+              {stat.value}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  ))}
+</div>
+
+
+
+      {/* Transactions */}
+      <div className="bg-white border border-gray-200 rounded-xl">
+  <div className="flex items-center justify-between p-4 border-b border-gray-200">
+    <div>
+      <h3 className="text-sm font-semibold text-gray-900">
+        Recent Transactions
+      </h3>
+      <p className="text-xs text-gray-500">Latest financial activities</p>
+    </div>
+    <button className="text-sm font-medium text-blue-600 hover:underline">
+      View All
+    </button>
+  </div>
+</div>
+
+    </div>
+  </div>
+);
+
   };
 
   // Wallet Section
@@ -3697,11 +3767,11 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const renderUser = () => {
     return (
       <div className="space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <AdminsPage />
+  <div className="w-full">
+    <UserManagementWrapper />
+  </div>
+</div>
 
-      </div>
-      </div>
     )};
   // Advertising Section
 
@@ -3956,7 +4026,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
             </div>
           ) : (
             <div className="text-center py-8">
-              <BarChart className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+              <BarChart3 className="w-12 h-12 text-gray-300 mx-auto mb-3" />
               <p className="text-gray-500">No analytics data available</p>
             </div>
           )}
@@ -4261,7 +4331,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
         {!isMobile && (
           <div className="p-4 border-b border-gray-200">
             <div className="flex items-center space-x-2 mb-3">
-              <div className="w-8 h-8 bg-yellow-500 rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-yellow-400 rounded-lg flex items-center justify-center">
                 <Shield className="w-4 h-4 text-white" />
               </div>
               <div className=" ">
@@ -4288,7 +4358,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
               }}
               className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg mb-1 text-sm font-medium transition-all duration-200 ${
                 activeSection === item.id
-                  ? 'bg-gray-100 text-gray-900'
+                  ? 'bg-yellow-400 text-gray-900'
                   : 'text-gray-700 hover:bg-gray-50'
               }`}
             >
@@ -4337,7 +4407,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
           </div>
         )}
 
-        <div className="flex-1 flex flex-col overflow-hidden">
+        <div className="flex-1 flex bg-gray-100 flex-col overflow-hidden">
           <div className="bg-white border-b border-gray-200 lg:hidden">
             <div className="flex items-center justify-between p-3">
               <div className="flex items-center space-x-2">
@@ -4382,8 +4452,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
           </div>
 
           <div className="flex-1 overflow-auto p-4 md:p-6">
-            <div className="hidden lg:flex items-center justify-between mb-6">
-              <div>
+            <div className="hidden lg:flex items-center justify-end mb-6">
+              {/* <div>
                 <h1 className="text-2xl font-bold text-gray-900 capitalize">
                   {activeSection === "dashboard"
                     ? "Dashboard"
@@ -4394,9 +4464,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
                     ? "Platform overview and analytics"
                     : `Manage ${activeSection.replace(/_/g, " ")}`}
                 </p>
-              </div>
+              </div> */}
 
-              <div className="flex items-center gap-3">
+              {/* <div className="flex items-center gap-3">
                 {activeSection !== "dashboard" &&
                   activeSection !== "settings" && (
                     <div className="relative">
@@ -4441,7 +4511,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
                     </span>
                   </div>
                 </div>
-              </div>
+              </div> */}
             </div>
 
             {isLoading && activeSection === "dashboard" ? (

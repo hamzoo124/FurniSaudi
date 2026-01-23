@@ -1,5 +1,5 @@
 import React from "react";
-import { supabaseAdmin as supabase } from '@/lib/supabase';
+import { supabaseAdmin as supabase } from '../../lib/supabase';
 import { useNavigate } from "react-router-dom";
 import { 
   BarChart3, 

@@ -17,15 +17,8 @@ export function UserTabs({ activeTab, onTabChange }: UserTabsProps) {
   const currentActive = activeTab ?? location.pathname;
 
   return (
-    <div className="border-b border-slate-200 dark:border-slate-800">
-      <nav
-        className="
-          flex gap-6
-          overflow-x-auto
-          whitespace-nowrap
-          no-scrollbar
-        "
-      >
+    <div className="border-b border-slate-200">
+      <nav className="flex gap-6 overflow-x-auto whitespace-nowrap no-scrollbar">
         {tabs.map((tab) => {
           const isActive = currentActive.startsWith(tab.path);
 
@@ -35,15 +28,28 @@ export function UserTabs({ activeTab, onTabChange }: UserTabsProps) {
               to={tab.path}
               onClick={() => onTabChange?.(tab.path)}
               className={`
-                pb-4 text-sm font-medium transition-colors
+                relative pb-4 text-sm font-medium transition-all
                 ${
                   isActive
-                    ? "border-b-2 border-yellow-400 text-slate-900 dark:text-white font-bold"
-                    : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
+                    ? "text-black font-semibold"
+                    : "text-slate-500 hover:text-black"
                 }
               `}
             >
               {tab.name}
+
+              {/* Underline */}
+              <span
+                className={`
+                  absolute left-0 -bottom-[1px] h-[2px] w-full
+                  transition-all duration-300
+                  ${
+                    isActive
+                      ? "bg-yellow-400"
+                      : "bg-transparent group-hover:bg-yellow-200"
+                  }
+                `}
+              />
             </Link>
           );
         })}

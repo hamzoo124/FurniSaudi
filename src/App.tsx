@@ -889,6 +889,7 @@ const NewAdminDashboardWrapper = () => {
     if (path === '/admin/products') return 'products';
     if (path === '/admin/orders') return 'orders';
     if (path === '/admin/reviews') return 'reviews';
+    if (path === '/admin/finance') return 'finance';
     if (path === '/admin/wallet') return 'wallet';
     if (path === '/admin/contracts') return 'contracts';
     if (path === '/admin/advertising') return 'advertising';
@@ -1203,7 +1204,7 @@ function AppContent() {
       />
     );
   };
-  console.log("carttttttttttttttttttttttttttt",cartItems);
+
 
   const EditProductWrapper = () => {
     const { productId } = useParams();
@@ -1394,6 +1395,7 @@ function AppContent() {
         <Route path="/admin/products" element={<NewAdminDashboardWrapper />} />
         <Route path="/admin/orders" element={<NewAdminDashboardWrapper />} />
         <Route path="/admin/reviews" element={<NewAdminDashboardWrapper />} />
+        <Route path="/admin/finance" element={<NewAdminDashboardWrapper />} />
         <Route path="/admin/wallet" element={<NewAdminDashboardWrapper />} />
         <Route path="/admin/contracts" element={<NewAdminDashboardWrapper />} />
         <Route path="/admin/advertising" element={<NewAdminDashboardWrapper />} />
