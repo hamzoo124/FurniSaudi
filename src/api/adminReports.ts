@@ -1,5 +1,5 @@
 // src/api/adminReports.ts
-import { supabase } from '@/lib/supabase';
+import { supabase } from '../lib/supabase';
 
 export const adminReportAPI = {
   // Generate sales report

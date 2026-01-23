@@ -1,7 +1,7 @@
 // src/hooks/useAdminReports.ts
 import { useState, useEffect, useCallback } from 'react';
-import { adminReportAPI } from '@/api/adminReports';
-import { supabase } from '@/lib/supabase';
+import {adminReportAPI} from '../api/adminReports';
+
 
 export const useAdminReports = () => {
   const [savedReports, setSavedReports] = useState<any[]>([]);

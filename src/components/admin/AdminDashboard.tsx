@@ -1847,11 +1847,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
   };
 
   // ============== RENDER SECTIONS ==============
-
+const setFilterOpen = (open: boolean) => {
+  // Placeholder function for filter modal
+  toast.info(`Filter modal ${open ? "opened" : "closed"}`);
+}
   // Dashboard Section
   const renderDashboard = () => {
     const userName = currentUser?.user_metadata?.full_name || "Admin";
-
+ 
     return (
   <div className="space-y-8 min-h-screen">
     {/* Header */}
@@ -1882,7 +1885,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
         <button
           onClick={() => setFilterOpen(true)}
           className="inline-flex items-center bg-yellow-400 justify-center gap-2 px-3 py-2 text-sm font-semibold
-                     border border-gray-300 rounded-lg bg-white text-gray-700
+                     border border-gray-300 rounded-lg  text-gray-700
                      hover:bg-gray-50"
         >
           <Filter className="w-4 h-4 " />
@@ -3186,136 +3189,157 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
   // Orders Section
   const renderOrders = () => {
     return (
-      <div className="space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <h2 className="text-xl font-semibold text-gray-900">
-              Order Management
-            </h2>
-            <p className="text-sm text-gray-600 mt-1">
-              {orders?.length || 0} total orders • {recentOrders?.length || 0}{" "}
-              recent orders
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search orders..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
-              />
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                    Order #
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                    Customer
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                    Date
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                    Amount
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {orders && orders.length > 0
-                  ? orders.map((order: any) => (
-                      <tr
-                        key={order.id}
-                        className="hover:bg-gray-50 transition-colors"
-                      >
-                        <td className="px-4 py-3">
-                          <p className="text-sm font-medium text-gray-900">
-                            #{order.order_number || order.id.substring(0, 8)}
-                          </p>
-                        </td>
-                        <td className="px-4 py-3">
-                          <p className="text-sm text-gray-900">
-                            {order.customer_name ||
-                              order.profiles?.full_name ||
-                              "Unknown Customer"}
-                          </p>
-                          <p className="text-xs text-gray-500">
-                            {order.customer_email ||
-                              order.profiles?.email ||
-                              "No email"}
-                          </p>
-                        </td>
-                        <td className="px-4 py-3">
-                          <p className="text-sm text-gray-900">
-                            {formatDate(order.created_at)}
-                          </p>
-                        </td>
-                        <td className="px-4 py-3">
-                          <p className="text-sm font-medium text-gray-900">
-                            {formatCurrency(order.total_amount || 0)}
-                          </p>
-                        </td>
-                        <td className="px-4 py-3">
-                          <StatusBadge status={order.status || "pending"} />
-                        </td>
-                        <td className="px-4 py-3">
-                          <div className="flex items-center gap-2">
-                            <ActionButton
-                              icon={Eye}
-                              label="View"
-                              variant="secondary"
-                              size="sm"
-                              onClick={() =>
-                                window.open(`/order/${order.id}`, "_blank")
-                              }
-                            />
-                          </div>
-                        </td>
-                      </tr>
-                    ))
-                  : !ordersLoading && (
-                      <tr>
-                        <td colSpan={6} className="px-4 py-8 text-center">
-                          <ShoppingBag className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                          <p className="text-gray-500">No orders found</p>
-                        </td>
-                      </tr>
-                    )}
-                {ordersLoading && (
-                  <tr>
-                    <td colSpan={6} className="px-4 py-3">
-                      <div className="animate-pulse space-y-3">
-                        {[1, 2, 3].map((i) => (
-                          <div
-                            key={i}
-                            className="h-12 bg-gray-200 rounded-lg"
-                          ></div>
-                        ))}
-                      </div>
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+  <div className="space-y-6">
+    {/* Header */}
+    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div>
+        <h2 className="text-2xl font-bold text-gray-900">
+          Order Management
+        </h2>
+        <p className="text-sm text-gray-500 mt-1">
+          Manage and track customer orders
+        </p>
+        <div className="mt-1 text-xs text-gray-500">
+          <span className="font-medium text-gray-700">
+            {orders?.length || 0}
+          </span>{" "}
+          total orders •{" "}
+          <span className="font-medium text-gray-700">
+            {recentOrders?.length || 0}
+          </span>{" "}
+          recent
         </div>
       </div>
-    );
+
+      {/* Search */}
+      <div className="flex items-center gap-2">
+        <div className="relative w-full sm:w-64">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <input
+            type="text"
+            placeholder="Search by order #, customer..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-9 pr-3 py-2 rounded-lg border border-gray-300 bg-white
+                       text-sm text-gray-900 placeholder-gray-400
+                       focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
+          />
+        </div>
+      </div>
+    </div>
+
+    {/* Table */}
+    <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm">
+          <thead className="bg-gray-50 border-b border-gray-200">
+            <tr>
+              {[
+                "Order #",
+                "Customer",
+                "Date",
+                "Amount",
+                "Status",
+                "Actions",
+              ].map((h) => (
+                <th
+                  key={h}
+                  className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wide"
+                >
+                  {h}
+                </th>
+              ))}
+            </tr>
+          </thead>
+
+          <tbody className="divide-y divide-gray-100">
+            {orders && orders.length > 0 ? (
+              orders.map((order: any) => (
+                <tr
+                  key={order.id}
+                  className="hover:bg-gray-50 transition"
+                >
+                  {/* Order */}
+                  <td className="px-4 py-3 font-medium text-gray-900">
+                    #{order.order_number || order.id.substring(0, 8)}
+                  </td>
+
+                  {/* Customer */}
+                  <td className="px-4 py-3">
+                    <p className="font-medium text-gray-900">
+                      {order.customer_name ||
+                        order.profiles?.full_name ||
+                        "Unknown Customer"}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {order.customer_email ||
+                        order.profiles?.email ||
+                        "No email"}
+                    </p>
+                  </td>
+
+                  {/* Date */}
+                  <td className="px-4 py-3 text-gray-700">
+                    {formatDate(order.created_at)}
+                  </td>
+
+                  {/* Amount */}
+                  <td className="px-4 py-3 font-semibold text-gray-900">
+                    {formatCurrency(order.total_amount || 0)}
+                  </td>
+
+                  {/* Status */}
+                  <td className="px-4 py-3">
+                    <StatusBadge status={order.status || "pending"} />
+                  </td>
+
+                  {/* Actions */}
+                  <td className="px-4 py-3">
+                    <ActionButton
+                      icon={Eye}
+                      label="View"
+                      variant="secondary"
+                      size="sm"
+                      onClick={() =>
+                        window.open(`/order/${order.id}`, "_blank")
+                      }
+                    />
+                  </td>
+                </tr>
+              ))
+            ) : !ordersLoading ? (
+              <tr>
+                <td colSpan={6} className="px-6 py-10 text-center">
+                  <ShoppingBag className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                  <p className="text-gray-500 font-medium">
+                    No orders found
+                  </p>
+                  <p className="text-xs text-gray-400 mt-1">
+                    Orders will appear here once customers place them
+                  </p>
+                </td>
+              </tr>
+            ) : (
+              <tr>
+                <td colSpan={6} className="px-4 py-6">
+                  <div className="animate-pulse space-y-3">
+                    {[1, 2, 3].map((i) => (
+                      <div
+                        key={i}
+                        className="h-12 bg-gray-200 rounded-lg"
+                      />
+                    ))}
+                  </div>
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+);
+
   };
 
   // Reviews Section
@@ -3909,6 +3933,17 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
       </div>
     );
   };
+    
+  const mainReport = {
+    totalVisits: 12500,
+    avgOrderValue: 75.5,
+    topProducts: [
+      { id: 1, name: "Product A", sales: 120, revenue: 3600 },
+      { id: 2, name: "Product B", sales: 95, revenue: 2850 },
+      { id: 3, name: "Product C", sales: 60, revenue: 1800 },
+    ],
+  };
+
 
   // Analytics Section
   const renderAnalytics = () => {
