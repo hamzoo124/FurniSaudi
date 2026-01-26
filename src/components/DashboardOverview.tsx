@@ -465,13 +465,13 @@ const DashboardOverview: React.FC = () => {
             <div className="flex items-center bg-white border border-gray-300 rounded-lg p-1">
               <button
                 onClick={() => setDateRange('7d')}
-                className={`px-3 py-1.5 text-sm font-medium rounded ${dateRange === '7d' ? 'bg-yellow-400 text-white' : 'text-gray-700 hover:bg-gray-100'}`}
+                className={`px-3 py-1.5 text-sm font-medium rounded ${dateRange === '7d' ? 'bg-yellow-700 text-white' : 'text-gray-700 hover:bg-gray-100'}`}
               >
                 Last 7 Days
               </button>
               <button
                 onClick={() => setDateRange('30d')}
-                className={`px-3 py-1.5 text-sm font-medium rounded ${dateRange === '30d' ? 'bg-yellow-400 text-white' : 'text-gray-700 hover:bg-gray-100'}`}
+                className={`px-3 py-1.5 text-sm font-medium rounded ${dateRange === '30d' ? 'bg-yellow-600   text-white' : 'text-gray-700 hover:bg-yellow-100'}`}
               >
                 Last 30 Days
               </button>
@@ -479,14 +479,14 @@ const DashboardOverview: React.FC = () => {
             
             <button
               onClick={loadData}
-              className="flex items-center gap-2 bg-yellow-400 px-4 py-2  border border-gray-300 rounded-lg text-white hover:bg-gray-50 transition"
+              className="flex items-center gap-2 bg-yellow-600 px-4 py-2  border border-gray-300 rounded-lg text-white hover:bg-gray-50 transition"
             >
               <RefreshCw className="w-4 h-4" />
               <span className="font-medium">Refresh</span>
             </button>
             
             <div className="hidden md:block">
-              <button className="flex items-center gap-2 px-4 py-2 bg-yellow-400 text-white rounded-lg hover:bg-blue-700 transition">
+              <button className="flex items-center gap-2 px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-blue-700 transition">
                 <Calendar className="w-4 h-4" />
                 <span className="font-medium">Export Report</span>
               </button>
