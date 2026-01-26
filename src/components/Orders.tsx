@@ -1411,7 +1411,7 @@ const Orders: React.FC<OrdersPageProps> = ({ onNavigate, onBack }) => {
   // }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen  px-3">
       {/* Page Header */}
       <div className="mb-8">
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-6">
@@ -1424,7 +1424,7 @@ const Orders: React.FC<OrdersPageProps> = ({ onNavigate, onBack }) => {
           <div className="flex items-center space-x-3 mt-4 md:mt-0">
             <button
               onClick={() => handleExportOrders(activeTab)}
-              className="flex items-center space-x-2 px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-700"
+              className="flex items-center space-x-2 px-4 py-2 bg-yellow-400 border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-700"
             >
               <Download className="w-4 h-4" />
               <span>
@@ -1438,7 +1438,7 @@ const Orders: React.FC<OrdersPageProps> = ({ onNavigate, onBack }) => {
             </button>
             <button
               onClick={loadOrders}
-              className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              className="flex items-center space-x-2 px-4 py-2 bg-yellow-400 text-black rounded-lg hover:bg-blue-700"
             >
               <RefreshCw className="w-4 h-4" />
               <span>Refresh</span>

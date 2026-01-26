@@ -452,10 +452,10 @@ const DashboardOverview: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 md:p-6">
+    <div className="min-h-screen  ">
       {/* Page Header */}
       <div className="mb-8">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 ">
           <div>
             <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Seller Dashboard Overview</h1>
             <p className="text-gray-600 mt-1">Business performance summary • Last updated: Today, 10:30 AM</p>
@@ -465,13 +465,13 @@ const DashboardOverview: React.FC = () => {
             <div className="flex items-center bg-white border border-gray-300 rounded-lg p-1">
               <button
                 onClick={() => setDateRange('7d')}
-                className={`px-3 py-1.5 text-sm font-medium rounded ${dateRange === '7d' ? 'bg-blue-600 text-white' : 'text-gray-700 hover:bg-gray-100'}`}
+                className={`px-3 py-1.5 text-sm font-medium rounded ${dateRange === '7d' ? 'bg-yellow-400 text-white' : 'text-gray-700 hover:bg-gray-100'}`}
               >
                 Last 7 Days
               </button>
               <button
                 onClick={() => setDateRange('30d')}
-                className={`px-3 py-1.5 text-sm font-medium rounded ${dateRange === '30d' ? 'bg-blue-600 text-white' : 'text-gray-700 hover:bg-gray-100'}`}
+                className={`px-3 py-1.5 text-sm font-medium rounded ${dateRange === '30d' ? 'bg-yellow-400 text-white' : 'text-gray-700 hover:bg-gray-100'}`}
               >
                 Last 30 Days
               </button>
@@ -479,14 +479,14 @@ const DashboardOverview: React.FC = () => {
             
             <button
               onClick={loadData}
-              className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition"
+              className="flex items-center gap-2 bg-yellow-400 px-4 py-2  border border-gray-300 rounded-lg text-white hover:bg-gray-50 transition"
             >
               <RefreshCw className="w-4 h-4" />
               <span className="font-medium">Refresh</span>
             </button>
             
             <div className="hidden md:block">
-              <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+              <button className="flex items-center gap-2 px-4 py-2 bg-yellow-400 text-white rounded-lg hover:bg-blue-700 transition">
                 <Calendar className="w-4 h-4" />
                 <span className="font-medium">Export Report</span>
               </button>
@@ -494,9 +494,9 @@ const DashboardOverview: React.FC = () => {
           </div>
         </div>
         
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-2">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-2 mt-10">
           <div className="col-span-1 lg:col-span-3">
-            <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl p-6 text-white">
+            <div className="bg-gradient-to-r from-yellow-700 to-yellow-600 rounded-xl p-6 text-white">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm opacity-90">Total Business Value</p>
@@ -613,7 +613,7 @@ const DashboardOverview: React.FC = () => {
 
       {/* Sales Performance Chart */}
       <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm mb-8">
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-6 ">
           <div>
             <h2 className="text-xl font-bold text-gray-900">Sales Performance</h2>
             <p className="text-gray-600 text-sm mt-1">Daily revenue trend for {dateRange === '7d' ? 'last 7 days' : 'last 30 days'}</p>

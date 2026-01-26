@@ -153,63 +153,8 @@ const [openMenu, setOpenMenu] = useState<string | null>(null);
         hook: dashboard,
         badge: 0,
       },
-      {
-  id: "users",
-  icon: UserCheck,
-  label: "Users",
-  badge: 0,
-  children: [
-    {
-      id: "user-seller",
-      label: "Seller",
-      children: [
-        {
-          id: "seller-approval",
-          label: "Seller Approval",
-        },
-        {
-          id: "seller-products",
-          label: "Seller Products",
-        },
-      ],
-    },
-    {
-      id: "user-buyer",
-      label: "Buyer",
-      children: [
-        {
-          id: "buyer-orders",
-          label: "Buyer Orders",
-        },
-        {
-          id: "buyer-reviews",
-          label: "Buyer Reviews",
-        },
-      ],
-    },
-    {
-      id: "user-admin",
-      label: "Admin",
-      children: [
-        {
-          id: "admin-users",
-          label: "User Management",
-        },
-        {
-          id: "admin-reports",
-          label: "Reports",
-        },
-      ],
-    },
-  ],
-},
 
-      {
-        id: "SellerApproval",
-        icon: BadgeCheck,
-        label: "SellerApproval",
-        badge: 0,
-      },
+     
 
       {
         id: "products",
@@ -835,25 +780,16 @@ const findNavItemById = (id: string, items: typeof navItems): any => {
       <div className="w-64 bg-white border-r border-gray-200 hidden lg:block">
         <div className="p-4 border-b border-gray-200">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gray-900 rounded-lg flex items-center justify-center">
+            <div className="w-10 h-10 bg-yellow-400 0 rounded-lg flex items-center justify-center">
               <Store className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h1 className="text-sm font-semibold text-gray-900">
+             <h1 className="text-2xl font-bold text-gray-900">
                 Seller Hub
               </h1>
-              <p className="text-xs text-gray-500 truncate">
-                {isDemoMode
-                  ? "Demo Store"
-                  : storeProfile.profile?.business_name ||
-                    user?.email?.split("@")[0] ||
-                    "My Store"}
-              </p>
-              {isDemoMode && (
-                <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded mt-1 inline-block">
-                  Demo Mode
-                </span>
-              )}
+             
+            
+           
             </div>
           </div>
         </div>
@@ -868,7 +804,7 @@ const findNavItemById = (id: string, items: typeof navItems): any => {
                 disabled={isLoading && !isDemoMode}
                 className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 ${
                   activeSection === item.id
-                    ? "bg-gray-100 text-gray-900"
+                    ? "bg-yellow-400  text-gray-900"
                     : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                 }`}
               >
@@ -1007,17 +943,17 @@ const findNavItemById = (id: string, items: typeof navItems): any => {
         )}
 
         {/* Content Area */}
-        <div className="p-4 lg:p-6">
+        <div className=" px-4 bg-gray-100">
           {/* Header with Search */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-            <div>
-              <h1 className="text-xl lg:text-2xl font-bold text-gray-900 capitalize">
+          <div className="flex flex-col md:flex-row md:items-center justify-end gap-4 mb-4">
+            {/* <div> */}
+              {/* <h1 className="text-xl lg:text-2xl font-bold text-gray-900 capitalize">
                 {activeSection === "dashboard"
                   ? "Dashboard"
                   : activeSection === "add-product"
                     ? "Add Product"
                     : activeSection.replace("-", " ")}
-              </h1>
+              </h1> */}
               {/* <p className="text-sm text-gray-500 mt-1">
                 {isDemoMode
                   ? "Demo Mode - Showing sample data"
@@ -1025,9 +961,9 @@ const findNavItemById = (id: string, items: typeof navItems): any => {
                     ? "Overview of your store performance and analytics"
                     : `Manage your ${activeSection.replace("-", " ")}`}
               </p> */}
-            </div>
+            {/* </div> */}
 
-            <div className="flex items-center gap-2">
+            {/* <div className="flex items-center gap-2">
               {["products", "orders", "inventory", "custom-orders"].includes(
                 activeSection,
               ) && (
@@ -1095,11 +1031,11 @@ const findNavItemById = (id: string, items: typeof navItems): any => {
                 <span className="hidden sm:inline">Refresh</span>
                 <span className="sm:hidden">Refresh</span>
               </button>
-            </div>
+            </div> */}
           </div>
 
           {/* Content */}
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+          <div className=" rounded-xl  overflow-hidden">
             {renderContent()}
           </div>
 

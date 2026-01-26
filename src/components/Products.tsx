@@ -1390,7 +1390,7 @@ const Products: React.FC = () => {
   // }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 md:p-6">
+    <div className="min-h-screen  ">
       {/* Page Header */}
       <div className="mb-6">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
@@ -1404,14 +1404,14 @@ const Products: React.FC = () => {
           <div className="flex items-center gap-2">
             <button
               onClick={exportProducts}
-              className="flex items-center gap-1.5 px-3 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium text-sm"
+              className="flex items-center gap-1.5 px-3 py-2 border bg-yellow-400 border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium text-sm"
             >
               <Download className="w-3.5 h-3.5" />
               Export CSV
             </button>
             <button
               onClick={refreshProducts}
-              className="flex items-center gap-1.5 px-3 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 font-medium text-sm"
+              className="flex items-center gap-1.5 px-3 py-2 bg-yellow-400 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 font-medium text-sm"
               disabled={refreshing}
             >
               <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin' : ''}`} />

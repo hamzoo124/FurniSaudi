@@ -541,7 +541,7 @@ const CustomOrders: React.FC = () => {
   // ============================================================================
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen  px-3">
       {/* Page Header */}
       <div className="mb-8">
         <div className="flex items-center justify-between mb-4">
@@ -553,7 +553,7 @@ const CustomOrders: React.FC = () => {
           <div className="flex items-center space-x-3">
             <button
               onClick={handleExportData}
-              className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+              className="flex items-center space-x-2 px-4 py-2 bg-yellow-400 border border-gray-300 rounded-lg hover:bg-gray-50"
             >
               <Download className="w-4 h-4" />
               <span>Export</span>
@@ -562,7 +562,7 @@ const CustomOrders: React.FC = () => {
             <button
               onClick={loadData}
               disabled={loading}
-              className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+              className="flex items-center space-x-2 px-4 py-2 bg-yellow-400 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
             >
               <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
               <span>{loading ? 'Refreshing...' : 'Refresh'}</span>

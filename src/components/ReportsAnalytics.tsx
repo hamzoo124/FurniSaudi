@@ -652,7 +652,7 @@ const ReportsAnalytics: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen  px-3">
       {/* Page Header */}
       <div className="mb-8">
         <div className="flex items-center justify-between mb-6">
@@ -664,7 +664,7 @@ const ReportsAnalytics: React.FC = () => {
           <div className="flex items-center space-x-3">
             <button
               onClick={() => window.print()}
-              className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+              className="flex items-center space-x-2 px-4 py-2 bg-yellow-400 border border-gray-300 rounded-lg hover:bg-gray-50"
             >
               <Printer className="w-4 h-4" />
               <span>Print</span>
@@ -672,7 +672,7 @@ const ReportsAnalytics: React.FC = () => {
             <button
               onClick={() => applyFilters()}
               disabled={loading}
-              className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+              className="flex items-center space-x-2 px-4 py-2 bg-yellow-400 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
             >
               <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
               <span>{loading ? 'Refreshing...' : 'Refresh Data'}</span>
@@ -757,7 +757,7 @@ const ReportsAnalytics: React.FC = () => {
               <button
                 onClick={applyFilters}
                 disabled={loading}
-                className="w-full px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
+                className="w-full px-4 py-2.5 bg-yellow-400 text-white rounded-lg hover:bg-blue-700 font-medium"
               >
                 Apply Filters
               </button>

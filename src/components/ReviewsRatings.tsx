@@ -789,7 +789,7 @@ const ReviewsRatings: React.FC = () => {
   if (!summary) return null;
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 md:p-6">
+    <div className="min-h-screen   md:p-6">
       {/* Page Header */}
       <div className="mb-8">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -801,14 +801,14 @@ const ReviewsRatings: React.FC = () => {
           <div className="flex items-center gap-3">
             <button
               onClick={loadReviews}
-              className="flex items-center gap-2 px-4 py-2.5 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium"
+              className="flex items-center gap-2 px-4 py-2.5 bg-yellow-400 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium"
             >
               <RefreshCw className="w-4 h-4" />
               Refresh
             </button>
             <button
               onClick={() => console.log('Export reviews')}
-              className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
+              className="flex items-center gap-2 px-4 py-2.5 bg-yellow-400 text-white rounded-lg hover:bg-blue-700 font-medium"
             >
               <Download className="w-4 h-4" />
               Export Report

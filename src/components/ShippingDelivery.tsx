@@ -732,9 +732,9 @@ const ShippingDelivery: React.FC = () => {
   // ============================
 
   const renderHeader = () => (
-    <div className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-10">
-      <div className="px-6 py-4">
-        <div className="flex items-center justify-between">
+    <div className="   sticky top-0 z-10 ">
+      <div className="px-6 ">
+        <div className="flex items-center justify-between overflow-hidden red-400 " >
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Shipping & Delivery</h1>
             <p className="text-sm text-gray-600 mt-1">
@@ -746,7 +746,7 @@ const ShippingDelivery: React.FC = () => {
             <button
               onClick={handleRefresh}
               disabled={loading}
-              className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              className="flex items-center space-x-2 px-4 py-2 bg-yellow-400 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
               <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
               <span>Refresh</span>
@@ -755,7 +755,7 @@ const ShippingDelivery: React.FC = () => {
             <button
               onClick={handleSaveSettings}
               disabled={saving}
-              className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+              className="flex items-center space-x-2 px-4 py-2 bg-yellow-400 text-white rounded-lg text-sm font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
             >
               <Save className="w-4 h-4" />
               <span>{saving ? 'Saving...' : 'Save Settings'}</span>
@@ -803,8 +803,8 @@ const ShippingDelivery: React.FC = () => {
   );
 
   const renderDeliveryConfigCards = () => (
-    <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200 mb-6">
-      <h2 className="text-lg font-semibold text-gray-900 mb-4">Delivery Configuration</h2>
+    <div className="bg-white w-full rounded-lg p-6 shadow-sm border border-gray-200 mb-6">
+      <h2 className="text-lg font-semibold overflow-hidden text-gray-900 mb-4">Delivery Configuration</h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Self Delivery */}
         <div className={`p-4 rounded-lg border transition-all ${settings.self_delivery ? 'border-blue-200 bg-blue-50' : 'border-gray-200'}`}>
@@ -915,91 +915,116 @@ const ShippingDelivery: React.FC = () => {
         </button>
       </div>
 
-      <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Region
-              </th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Delivery Fee (SAR)
-              </th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Estimated Days
-              </th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Min Order
-              </th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Status
-              </th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {regions.map((region, index) => (
-              <tr key={region.id} className="hover:bg-gray-50">
-                <td className="px-4 py-3">
-                  <div className="font-medium text-gray-900">{region.region}</div>
-                  <div className="text-xs text-gray-500">
-                    {region.cities.join(', ')}
-                  </div>
-                </td>
-                <td className="px-4 py-3">
-                  <input
-                    type="number"
-                    value={region.fee}
-                    onChange={(e) => handleUpdateRegion(index, 'fee', parseInt(e.target.value) || 0)}
-                    className="w-24 px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </td>
-                <td className="px-4 py-3">
-                  <input
-                    type="number"
-                    value={region.estimated_days}
-                    onChange={(e) => handleUpdateRegion(index, 'estimated_days', parseInt(e.target.value) || 1)}
-                    className="w-24 px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-                    min="1"
-                  />
-                </td>
-                <td className="px-4 py-3">
-                  <input
-                    type="number"
-                    value={region.min_order_amount}
-                    onChange={(e) => handleUpdateRegion(index, 'min_order_amount', parseInt(e.target.value) || 0)}
-                    className="w-32 px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </td>
-                <td className="px-4 py-3">
-                  <label className="relative inline-flex items-center cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={region.active}
-                      onChange={(e) => handleUpdateRegion(index, 'active', e.target.checked)}
-                      className="sr-only peer"
-                    />
-                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
-                  </label>
-                </td>
-                <td className="px-4 py-3">
-                  <div className="flex items-center space-x-2">
-                    <button
-                      onClick={() => handleDeleteRegion(index)}
-                      className="p-1 text-red-600 hover:text-red-800 hover:bg-red-50 rounded"
-                      title="Delete Region"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+     <div className="relative w-full overflow-x-auto overscroll-x-contain">
+  <div className="inline-block min-w-full align-middle">
+    <table className="min-w-[900px] w-full table-fixed divide-y divide-gray-200">
+      <thead className="bg-gray-50">
+        <tr>
+          <th className="w-48 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+            Region
+          </th>
+          <th className="w-40 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+            Delivery Fee (SAR)
+          </th>
+          <th className="w-40 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+            Estimated Days
+          </th>
+          <th className="w-44 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+            Min Order
+          </th>
+          <th className="w-32 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+            Status
+          </th>
+          <th className="w-24 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+            Actions
+          </th>
+        </tr>
+      </thead>
+
+      <tbody className="bg-white divide-y divide-gray-200">
+        {regions.map((region, index) => (
+          <tr key={region.id} className="hover:bg-gray-50">
+            <td className="px-4 py-3">
+              <div className="font-medium text-gray-900 truncate">
+                {region.region}
+              </div>
+              <div className="text-xs text-gray-500 truncate">
+                {region.cities.join(", ")}
+              </div>
+            </td>
+
+            <td className="px-4 py-3">
+              <input
+                type="number"
+                value={region.fee}
+                onChange={(e) =>
+                  handleUpdateRegion(index, "fee", Number(e.target.value) || 0)
+                }
+                className="w-full max-w-[96px] px-2 py-1 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-blue-500"
+              />
+            </td>
+
+            <td className="px-4 py-3">
+              <input
+                type="number"
+                value={region.estimated_days}
+                onChange={(e) =>
+                  handleUpdateRegion(
+                    index,
+                    "estimated_days",
+                    Number(e.target.value) || 1
+                  )
+                }
+                min="1"
+                className="w-full max-w-[96px] px-2 py-1 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-blue-500"
+              />
+            </td>
+
+            <td className="px-4 py-3">
+              <input
+                type="number"
+                value={region.min_order_amount}
+                onChange={(e) =>
+                  handleUpdateRegion(
+                    index,
+                    "min_order_amount",
+                    Number(e.target.value) || 0
+                  )
+                }
+                className="w-full max-w-[120px] px-2 py-1 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-blue-500"
+              />
+            </td>
+
+            <td className="px-4 py-3">
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={region.active}
+                  onChange={(e) =>
+                    handleUpdateRegion(index, "active", e.target.checked)
+                  }
+                  className="sr-only peer"
+                />
+                <div className="w-11 h-6 bg-gray-200 rounded-full peer-checked:bg-green-600 after:absolute after:top-[2px] after:left-[2px] after:h-5 after:w-5 after:bg-white after:rounded-full after:transition-all peer-checked:after:translate-x-full" />
+              </label>
+            </td>
+
+            <td className="px-4 py-3">
+              <button
+                onClick={() => handleDeleteRegion(index)}
+                className="p-1 text-red-600 hover:bg-red-50 rounded"
+                title="Delete Region"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</div>
+
 
       {/* Add Region Modal */}
       {showAddRegion && (
@@ -1711,12 +1736,12 @@ const ShippingDelivery: React.FC = () => {
   // ============================
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen ">
       {/* Header with Stats */}
       {renderHeader()}
 
       {/* Main Content */}
-      <main className="p-6 space-y-6">
+      <main className=" space-y-6">
         {/* Delivery Configuration Cards */}
         {renderDeliveryConfigCards()}
 
