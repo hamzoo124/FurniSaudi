@@ -496,7 +496,7 @@ const DashboardOverview: React.FC = () => {
         
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-2 mt-10">
           <div className="col-span-1 lg:col-span-3">
-            <div className="bg-gradient-to-r from-yellow-700 to-yellow-600 rounded-xl p-6 text-white">
+            <div className="bg-gradient-to-r from-yellow-700 to-yellow-600 rounded-xl p-5 text-white">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm opacity-90">Total Business Value</p>
@@ -512,9 +512,9 @@ const DashboardOverview: React.FC = () => {
           </div>
           
           <div className="col-span-1">
-            <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+            <div className=" bg-yellow-600 h-32   rounded-xl p-6 border border-gray-200 ">
               <div className="flex items-center justify-between">
-                <div>
+                <div className="">
                   <p className="text-sm text-gray-600">Avg. Order Value</p>
                   <p className="text-2xl font-bold text-gray-900 mt-1">{formatCurrency(salesSummary.averageOrderValue)}</p>
                 </div>
